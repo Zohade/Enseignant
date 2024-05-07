@@ -17,9 +17,11 @@
             @endif
             @if ($errors->any())
                 <div class="alert alert-danger">
-                    @foreach ($errors->all() as $error)
-                        {{ $error }}
-                    @endforeach
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                          <li>  {{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
         <p class="title">Connexion</p>

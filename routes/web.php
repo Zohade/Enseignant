@@ -15,7 +15,7 @@ Route::post('/login', [AuthController::class,'loginPost'])->name('loginPost');
 
 Route::get('/inscrire', [AuthController::class, 'register'])->name('signUp');
 Route::post('/register', [AuthController::class,'registerPost'])->name('signUpPost');
-Route::get('/confirmer-Inscription',[AuthController::class,'confirmerinscrpt'])->name('confirmerInscript');
+Route::get('/confirmerInscription/{userId}',[AuthController::class,'confirmerinscript'])->name('confirmerInscript');
 Route::get('/forgot', [AuthController::class, 'forget'])->name("forget");
 Route::post("/foget", [AuthController::class,"forgetPost"])->name("forgetPost");
 Route::post("/forgetLast", [AuthController::class,"forgetLast"])->name("newPass");

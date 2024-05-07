@@ -18,9 +18,11 @@
             @endif
             @if ($errors->any())
                 <div class="alert alert-danger">
-                    @foreach ($errors->all() as $error)
-                        {{ $error }}
-                    @endforeach
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                           <li> {{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
         <hr>
@@ -60,7 +62,9 @@
                 <input type="radio" name="grade" value="directeur"> Directeur
                 <input type="radio" name="grade" value="cpins"> Cp ou Inspecteur
             </div>
-            <button type="submit">S'inscrire</button>
+            <div class="form-group">
+                <button type="submit" class="form-btn">S'inscrire</button>
+            </div>
         </form>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

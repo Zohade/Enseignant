@@ -23,7 +23,7 @@ class AuthRequest extends FormRequest
     {
         return [
             //
-            "Son_mail"=>'required|email:rfc,dns',
+            "Son_mail"=>'required|email',
             "Son_pass"=>'required',
         ];
     }

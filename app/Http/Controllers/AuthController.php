@@ -11,6 +11,8 @@ use App\Models\Arrondissement;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\EnvoyerMail;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class AuthController extends Controller
@@ -20,7 +22,22 @@ class AuthController extends Controller
         return view("auth.index");
     }
     public function loginPost(AuthRequest $request){
-        echo 'hello';
+          $credentials = [
+            'email' => $request->Son_mail,
+            'password' => $request->Son_passe,
+        ];
+        //https://laravel.com/docs/11.x/authentication#authenticating-users
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            $user = Auth::user();
+            if ($user->statut == 0) {
+                dd('compte pas encore validé');
+            }else{
+                dd('bravo vous êtes connecté');
+            }
+        } else {
+            return back()->withErrors("Mail ou mot de passe incorrect");
+        }
     }
 
     public function register()
@@ -40,10 +57,12 @@ class AuthController extends Controller
                 "name"=> $request->nom." ".$request->prenom,
                 "email"=>$request->mail,
                 "phone_number"=> $request->phone_number,
-                "aronodissement_id"=>$request->arrondissement,
+                "arrondissement_id"=>$request->arrondissement,
                 "grade"=> $request->grade,
                 "password"=>$password,
             ]);
+            //récupération de l'id de l'utilisateur qui vient de s'inscrire
+            $userId=User::where("email",$request->mail)->first()->id;
             //envoie de lien de confirmation par mail
             $data = [
                     'title' => 'Confirmation de compte Minsihoue',
@@ -51,17 +70,22 @@ class AuthController extends Controller
                                 Cliquez sur le bouton en bas pour confirmer votre inscription
                                 ",
                     'buttonText' => 'Confirmer l\'inscription',
-                    'confirmationLink' => route('confirmerInscript'),
+                    'confirmationLink' => route("confirmerInscript",['userId'=>$userId]),
                 ];
                  \Illuminate\Support\Facades\Mail::to($request->mail)->send(new EnvoyerMail($data));
-                 return redirect()->route('login')->with('success','mail envoyé');
+                 return redirect()->route('login')->with('success','Nous vous avons envoyé un message par mail. Vérifiez votre adresse mail pour activer compte.');
         } catch (\Throwable $th) {
-            die('une erreur est survenue'.$th->getMessage());
+            die('une erreur est survenue '.$th->getMessage());
         }
     }
-    public function confirmerinscript()
+    public function confirmerinscript($id)
     {
-
+         $user_update = \Illuminate\Support\Facades\DB::table('users')
+                ->where(['id'=>$id,
+                    "email_verified_at"=>now(),
+                ])
+                ->update(['statut' =>1]);
+        return redirect()->route('login')->with('success','Votre compte a été finalisé avec succès');
     }
     public function forget()
     {
