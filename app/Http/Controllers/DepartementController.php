@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Departement;
 use Illuminate\Http\Request;
+use App\Models\Ville;
 
 class DepartementController extends Controller
 {
@@ -61,5 +62,10 @@ class DepartementController extends Controller
     public function destroy(Departement $departement)
     {
         //
+    }
+     public function getVilles($departementId)
+    {
+        $villes = Ville::where('departement_id', $departementId)->get();
+        return response()->json(['villes' => $villes]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Arrondissement;
 use App\Models\Ville;
 use Illuminate\Http\Request;
 
@@ -61,5 +62,10 @@ class VilleController extends Controller
     public function destroy(Ville $ville)
     {
         //
+    }
+     public function getArrondissements($villeId)
+    {
+        $arrondissements = Arrondissement::where('ville_id', $villeId)->get();
+        return response()->json(['arrondissements' => $arrondissements]);
     }
 }

@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->integer('phone_number')->unique()->default(0);
+            $table->integer('arrondissement_id')->default(0);
+            $table->string('grade')->default("instituteur");
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
