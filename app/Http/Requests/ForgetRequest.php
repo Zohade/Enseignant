@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AuthRequest extends FormRequest
+class ForgetRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,15 +23,13 @@ class AuthRequest extends FormRequest
     {
         return [
             //
-            "Son_mail"=>'required',
-            "Son_pass"=>'required',
+            "email"=>"required|email",
         ];
     }
     public function messages(): array{
         return [
-            'Son_mail.required' => 'L\'adresse mail est obligatoire',
-            'Son_mail.email' => 'L\'adresse mail est incorrect',
-            'Son_pass.required' => 'Le mot de passe est requis',
+            "email.required" => "Vous ne pouvez pas continuer sans mettre votre adresse mail",
+            "email.email" => "Votre adresse est incorrect",
         ];
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\AuthRequest;
+use App\Http\Requests\ForgetRequest;
+use App\Http\Requests\PasswordChangeRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\Departement;
 use App\Models\Ville;
@@ -13,51 +15,44 @@ use Illuminate\Support\Facades\Hash;
 use App\Mail\EnvoyerMail;
 use Illuminate\Support\Facades\Auth;
 
-
-
 class AuthController extends Controller
 {
     //
     public function login(){
         return view("auth.index");
     }
-    public function loginPost(AuthRequest $request){
-          $credentials = [
-            'email' => $request->Son_mail,
-            'password' => $request->Son_passe,
-        ];
-        //https://laravel.com/docs/11.x/authentication#authenticating-users
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            $user = Auth::user();
-            if ($user->statut == 0) {
-                dd('compte pas encore validé');
+    public function loginPost(AuthRequest $request)
+    {
+        try {
+            $user = User::where('email', $request->input('Son_mail'))
+                ->orWhere('phone_number', $request->input('Son_mail'))
+                ->first();
+            if ($user && Hash::check($request->input('Son_pass'), $user->password)) {
+                echo 'hello';
+
             }else{
-                dd('bravo vous êtes connecté');
+                return to_route('login')->withErrors('Mail ou mot de passe incorrect');
             }
-        } else {
-            return back()->withErrors("Mail ou mot de passe incorrect");
+        } catch (\Throwable $th) {
+            die('Problème : ' . $th->getMessage());
         }
     }
-
     public function register()
     {
         $departements = Departement::all();
-        $villes=Ville::all();
-        $arrondissements=Arrondissement::all();
-        return view("auth.register", ["departements"=>$departements,"villes"=>$villes,
-        "arrondissements"=>$arrondissements]);
+        return view("auth.register", ["departements"=>$departements]);
     }
     public function registerPost(RegisterRequest $request){
+        $arrondissement=intval($request->arrondissement);
         //hasher le mot de passe
-        $password=Hash::make($request->password);
+        $password=Hash::make($request->password,['rounds' => 12,]);
         try {
             //enregistrement de l'utilisateur
             User::create([
                 "name"=> $request->nom." ".$request->prenom,
                 "email"=>$request->mail,
                 "phone_number"=> $request->phone_number,
-                "arrondissement_id"=>$request->arrondissement,
+                "arrondissement"=>$arrondissement,
                 "grade"=> $request->grade,
                 "password"=>$password,
             ]);
@@ -92,15 +87,41 @@ class AuthController extends Controller
         return view("auth.forgot");
     }
 
-    public function forgetPost()
+    public function forgetPost(ForgetRequest $request)
     {
-        return view("auth.forgotPost");
+        $user=User::where("email",$request->input("email"))->first();
+        if($user){
+            try {
+                 $userId=User::where("email",$request->email)->first()->id;
+                //envoie de lien de confirmation par mail
+                $data = [
+                        'title' => 'Réinitialiation de compte Minsihoue',
+                        'body' => "Cliquez sur le bouton en bas pour réinitialiser votre inscription
+                                    ",
+                        'buttonText' => 'Confirmer l\'inscription',
+                        'confirmationLink' => route("forgetLast",['userId'=>$userId]),
+                    ];
+                    \Illuminate\Support\Facades\Mail::to($request->email)->send(new EnvoyerMail($data));
+                    return redirect()->route('forget')->with('success','Nous vous avons envpyé un mail pour réinitiallisé votre compte');
+            } catch (\Throwable $th) {
+                die('Problème ' . $th->getMessage());
+            }
+        } else {
+            return to_route('forget')->withErrors("L'adresse mail ne correspond à aucun compte.");
+        }
     }
-    public function forgetLast()
-    {
-        return view("auth.forgotLast");
+    public function forgetLast($userId){
+        return view('auth.forgotLast',['userId'=>$userId]);
     }
-    public function newpasschange(){
-        return to_route("login")->with("success","Votre mot de passe a été bien mis à jour");
+    public function newpasschange(PasswordChangeRequest $request){
+        $password=Hash::make($request->input('mot_de_passe'));
+        $id=$request->input('id');
+        $back = \Illuminate\Support\Facades\DB::table('users')
+            ->where('id',$id)->update(['password'=> $password]);
+        if ($back) {
+            return to_route("login")->with("success", "Votre mot de passe a été bien mis à jour");
+        } else {
+            die('une erreur s\'est produite, veillez reprendre plus tard');
+        }
     }
 }

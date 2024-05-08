@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{asset('assets/css/forgot.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/css/alert.css')}}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Réinitialisation</title>
 </head>
@@ -19,11 +20,25 @@
         <path stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" stroke="#115DFC" d="M14.1667 14.1667H19.8334M14.1667 8.5H19.8334"></path>
       </svg>
     </div>
+        @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                          <li>  {{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
     <div class="note">
       <label class="title">Mise à jour</label>
       <span class="subtitle">Entrez votre adresse mail pour réinitialiser votre mot de passe. Vous recevrez un nombre de 6 chiffres </span>
     </div>
-    <input placeholder="Entrez votre adresse mail" title="Enter your e-mail" name="email" type="email" class="input_field">
+    <input placeholder="Entrez votre adresse mail" title="Enter your e-mail" name="email" type="email" class="input_field" required autofocus >
     <button class="submit">Suivant</button>
   </form>
 </div>

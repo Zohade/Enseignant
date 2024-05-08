@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{asset('assets/css/forgot.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/css/alert.css')}}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Nouveau mot de passe</title>
 </head>
@@ -11,9 +12,23 @@
 
     <form class="form3" action="{{route('newpasschange')}}"  method="post">
         @csrf
+        @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+        @endif
+        @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                          <li>  {{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+        @endif
        <p class="form-title">Changer votre mot de passe</p>
         <div class="input-container">
-          <input placeholder="Nouveau mot de passe" type="password">
+          <input placeholder="Nouveau mot de passe" type="password" name="mot_de_passe">
 
           <span>
             <svg stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -23,7 +38,7 @@
           </span>
         </div>
         <div class="input-container">
-          <input placeholder="Confirmer" type="password">
+          <input placeholder="Confirmer" type="password" name="mot_de_passe_confirmation">
 
           <span>
             <svg stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,7 +47,7 @@
             </svg>
           </span>
         </div>
-
+        <input type="hidden" value="{{$userId}}" name="id">
         <button class="submit" type="submit">
         Sauvegarder
       </button>
