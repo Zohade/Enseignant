@@ -28,7 +28,12 @@ class AuthController extends Controller
                 ->orWhere('phone_number', $request->input('Son_mail'))
                 ->first();
             if ($user && Hash::check($request->input('Son_pass'), $user->password)) {
-                echo 'hello';
+                if($user->statut==1){
+                    return view('dash');
+
+                }else{
+                    return to_route('login')->withErrors('Vérifiez votre adresse mail pour valider votre compte');
+                }
 
             }else{
                 return to_route('login')->withErrors('Mail ou mot de passe incorrect');
@@ -36,6 +41,9 @@ class AuthController extends Controller
         } catch (\Throwable $th) {
             die('Problème : ' . $th->getMessage());
         }
+    }
+    public function logout(){
+
     }
     public function register()
     {
@@ -55,6 +63,7 @@ class AuthController extends Controller
                 "arrondissement"=>$arrondissement,
                 "grade"=> $request->grade,
                 "password"=>$password,
+                "photo"=>'avatars/profil_null.jpg',
             ]);
             //récupération de l'id de l'utilisateur qui vient de s'inscrire
             $userId=User::where("email",$request->mail)->first()->id;
@@ -77,9 +86,10 @@ class AuthController extends Controller
     {
          $user_update = \Illuminate\Support\Facades\DB::table('users')
                 ->where(['id'=>$id,
-                    "email_verified_at"=>now(),
                 ])
-                ->update(['statut' =>1]);
+                ->update(['statut' =>1,
+                "email_verified_at"=>now(),
+            ]);
         return redirect()->route('login')->with('success','Votre compte a été finalisé avec succès');
     }
     public function forget()

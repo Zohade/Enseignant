@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             'statut'=>1,
             'grade'=>"instituteur",
             'phone_number'=>90000001,
+            'photo'=>'avatars/profil_null.jpg',
         ]);
          Departement::insert([
             ['id' => 1, 'name' => 'Alibori'],
