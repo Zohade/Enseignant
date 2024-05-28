@@ -3,7 +3,9 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\VilleController;
+use App\Http\Controllers\PublicationController;
 use App\Models\Departement;
+use App\Models\Publication;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,3 +27,6 @@ Route::post("newpasschange", [AuthController::class,"newpasschange"])->name("new
 //route Ajax
     Route::get('/get-villes/{departementId}', [DepartementController::class, 'getVilles']);
     Route::get('/get-arrondissements/{villeId}', [VilleController::class, 'getArrondissements']);
+
+    //Publication
+    Route::resource('publication', PublicationController::class);

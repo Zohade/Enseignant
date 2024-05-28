@@ -61,3 +61,23 @@ hr {
 .form-btn:active {
     box-shadow: none;
 }
+#strengthMessage {
+    font-weight: bold;
+}
+
+.weak {
+    color: red;
+}
+
+.medium {
+    color: orange;
+}
+
+.strong {
+    color: green;
+}
+.textPass{
+    font-style: italic;
+    font-size: 0.8em;
+    background-color: blanchedalmond;
+}

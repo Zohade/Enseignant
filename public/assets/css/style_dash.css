@@ -87,7 +87,7 @@ a{
     border-radius: 20px;
     display: flex;
     align-items: center;
-    padding: 0px 15px; 
+    padding: 0px 15px;
 }
 .navbar-left{
     display: flex;
@@ -177,7 +177,7 @@ a{
 
  }
 .sidebar-profile-link a{
-  flex-basis: 50%;  
+  flex-basis: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -188,7 +188,7 @@ a{
  }
 .sidebar-profile-link a:first-child{
     border-left: 0;
-    
+
    }
 .sidebar-profile-link a img{
    width: 20px;
@@ -234,7 +234,7 @@ a{
     color: #045be6;
     display: inline-block;
     margin: 10px 0;
-    
+
 
 }
  /*Right Sidebar */
@@ -261,10 +261,10 @@ a{
     font-weight: 600;
     color: #333;
     margin: 10px 0 30px;
-     
+
 }
 .sidebar-news a{
-    display: block; 
+    display: block;
     font-size: 12px;
     font-weight: 600;
     margin-top: 10px;
@@ -296,7 +296,7 @@ a{
     border-radius: 50%;
     margin: 4px;
 
-     
+
 }
 .sidebar-ad small{
     float: right;
@@ -325,12 +325,12 @@ a{
 }
 
 
-.sidebar-useful-links { 
+.sidebar-useful-links {
     padding: 15px 25px;
     text-align: center;
-    
 
-}   
+
+}
 .sidebar-useful-links a{
     display: inline-block;
     font-size: 14px;
@@ -355,7 +355,7 @@ a{
 
 .main-content{
     flex-basis: 47%;
-} 
+}
 .create-post{
     background: #fff;
 
@@ -403,7 +403,7 @@ a{
 .create-post-links li img{
     width: 15px;
     margin-right: 5px;
-    
+
 }
 .create-post-links li:last-child{
     background: #045be6 ;
@@ -464,7 +464,7 @@ a{
 }
 .post-author small{
     display: block;
-    margin-bottom: -2px; 
+    margin-bottom: -2px;
 }
 .post p{
     font-size: 14px;
@@ -634,7 +634,7 @@ a{
     }
     .post-activity-link img{
         margin-right: 0;
-          
+
     }
     #showMoreLink{
         display: block;
@@ -647,9 +647,151 @@ a{
         display: none;
     }
     .sidebar-activity.open-activity{
-        display: block; 
+        display: block;
     }
-    
 
-    
 }
+/* The Modal (background) */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+    padding-top: 60px;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 300px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Buttons */
+.modal-content button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#confirm-logout {
+    background-color: #d9534f;
+    color: white;
+}
+
+#cancel-logout {
+    background-color: #5bc0de;
+    color: white;
+}
+
+#confirm-logout:hover,
+#cancel-logout:hover {
+    opacity: 0.8;
+}
+
+#preview {
+    position: relative;
+    display: inline-block;
+}
+
+#preview img {
+    max-width: 200px;
+    height: auto;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.icon-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon img {
+    width: 100%;
+    height: 100%;
+}
+
+
+
+/*Modal document css*/
+
+   .modal {
+       display: none;
+       position: fixed;
+       z-index: 1000;
+       left: 0;
+       top: 0;
+       width: 100%;
+       height: 100%;
+       overflow: auto;
+       background-color: rgba(0, 0, 0, 0.4);
+       padding-top: 60px;
+       justify-content: center;
+       align-items: center;
+   }
+
+   .modal-content {
+       background-color: #fff;
+       padding: 30px;
+       border-radius: 10px;
+       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+       text-align: center;
+       width: 90%;
+       max-width: 500px;
+       position: relative;
+   }
+
+   .close {
+       position: absolute;
+       top: 10px;
+       right: 10px;
+       color: #aaa;
+       font-size: 24px;
+       font-weight: bold;
+       cursor: pointer;
+   }

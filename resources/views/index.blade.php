@@ -24,7 +24,7 @@
             </div>
             <form action="{{route('login')}}" method="get">
                 @csrf
-                @method('POST')
+                @method('GET')
                 <button class="button">
                     Commencer
                     <svg fill="currentColor" viewBox="0 0 24 24" class="icon">

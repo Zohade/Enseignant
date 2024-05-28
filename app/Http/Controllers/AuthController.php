@@ -24,11 +24,17 @@ class AuthController extends Controller
     public function loginPost(AuthRequest $request)
     {
         try {
-            $user = User::where('email', $request->input('Son_mail'))
+            $credentials = [
+                'email'=>$request->Son_mail,
+                'password'=>$request->Son_pass
+            ];
+            if (Auth::attempt($credentials)) {
+                 $user = User::where('email', $request->input('Son_mail'))
                 ->orWhere('phone_number', $request->input('Son_mail'))
                 ->first();
-            if ($user && Hash::check($request->input('Son_pass'), $user->password)) {
                 if($user->statut==1){
+                    $request->session()->regenerate();
+                     session()->put(["user" => $user]);
                     return view('dash');
 
                 }else{
@@ -42,8 +48,12 @@ class AuthController extends Controller
             die('Problème : ' . $th->getMessage());
         }
     }
-    public function logout(){
-
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('login');
     }
     public function register()
     {
@@ -112,7 +122,7 @@ class AuthController extends Controller
                         'confirmationLink' => route("forgetLast",['userId'=>$userId]),
                     ];
                     \Illuminate\Support\Facades\Mail::to($request->email)->send(new EnvoyerMail($data));
-                    return redirect()->route('forget')->with('success','Nous vous avons envpyé un mail pour réinitiallisé votre compte');
+                    return redirect()->route('forget')->with('success','Nous vous avons envoyé un mail pour réinitiallisé votre compte');
             } catch (\Throwable $th) {
                 die('Problème ' . $th->getMessage());
             }

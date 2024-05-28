@@ -27,7 +27,7 @@
         <p class="title">Connexion</p>
         <form class="form" action="{{route('loginPost')}}" method="POST">
             @csrf
-            <input type="text" name="Son_mail" class="input" value="{{old('Son_mail')}}" placeholder="Adresse mail ou numéro de téléphone" required>
+            <input type="text" name="Son_mail" class="input" value="{{old('Son_mail')}}" placeholder="Adresse mail ou numéro de téléphone" required autofocus>
             <input type="password" name="Son_pass" class="input" placeholder="Mot de passe" required>
             <p class="page-link">
             <a href="{{route('forget')}}" style="color:teal;" class="page-link-label">Mot de passe oublié?</a>
