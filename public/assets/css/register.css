@@ -81,3 +81,7 @@ hr {
     font-size: 0.8em;
     background-color: blanchedalmond;
 }
+ html {
+     -webkit-text-size-adjust: 100%;
+     text-size-adjust: 100%;
+ }

@@ -17,3 +17,7 @@
     background-color: #f8d7da;
     border-color: #f5c6cb;
 }
+ html {
+     -webkit-text-size-adjust: 100%;
+     text-size-adjust: 100%;
+ }

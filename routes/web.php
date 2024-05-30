@@ -25,8 +25,11 @@ Route::get('/forgetLast/{userId}',[AuthController::class,'forgetLast'])->name('f
 Route::post("newpasschange", [AuthController::class,"newpasschange"])->name("newpasschange");
 
 //route Ajax
-    Route::get('/get-villes/{departementId}', [DepartementController::class, 'getVilles']);
-    Route::get('/get-arrondissements/{villeId}', [VilleController::class, 'getArrondissements']);
+Route::get('/get-villes/{departementId}', [DepartementController::class, 'getVilles']);
+Route::get('/get-arrondissements/{villeId}', [VilleController::class, 'getArrondissements']);
+Route::get('/index', function () {
+    return view('afterAuth.index');
+})->name('dash')->middleware('auth');
 
     //Publication
-    Route::resource('publication', PublicationController::class);
+Route::resource('publication', PublicationController::class);

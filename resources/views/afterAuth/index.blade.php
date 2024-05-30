@@ -3,16 +3,31 @@
     Accueil
 @endsection
 @section('main')
+
         <div class="main-content">
             <div class="create-post">
                 <div class="create-post-input">
                     <form action="{{route('publication.store')}}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                         @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                          <li>  {{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+                    @csrf
                     @php
                         $avatar= Storage::url(session('user')['photo']);
                     @endphp
                     <img src="{{$avatar}}">
-                    <textarea rows="2" placeholder="Que voulez-vous publier ?"></textarea>
+                    <textarea rows="2" placeholder="Que voulez-vous publier ?" name="texte"></textarea>
                 </div>
                 <div class="create-post-links">
                     <li>
@@ -91,7 +106,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <div class="form-container">
-                <form id="document-form" action="{{route('publication.store')}}" method="POST">
+                <form id="document-form" action="{{route('publication.store')}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <h2>Soumettre un Document</h2>
                     <label for="doc-type">Type de document :</label>
@@ -109,7 +124,7 @@
                         <input type="file" id="file" name="document" required>
                     </div>
 
-                    <div id="guide-fields" class="conditional-fields">
+                    <div id="common-fields" class="conditional-fields">
                         <label for="description">Description :</label>
                         <textarea id="description" name="description"></textarea>
 
@@ -126,13 +141,10 @@
 
                     <div id="fiche-fields" class="conditional-fields">
                         <label for="subject">Matière :</label>
-                        <input type="text" id="subject" name="subject">
-
-                        <label for="class-fiche">Classe :</label>
-                        <input type="text" id="class-fiche" name="class-fiche">
+                        <input type="text" id="subject" name="matiere">
 
                         <label for="learning-situation">Situation d'apprentissage :</label>
-                        <textarea id="learning-situation" name="learning-situation"></textarea>
+                        <textarea id="learning-situation" name="SA"></textarea>
                     </div>
 
                     <label for="paid">Document payant :</label>
@@ -216,7 +228,7 @@
                         </label>
                         <input type="number" name="priceFor" id="prix" min="0">
                     </div>
-                    <input type="submit" value="Programmer" name="formationSoumission">
+                    <input type="submit" value="Programmer" name="FormationSoumission">
             </form>
         </div>
     </div>
@@ -296,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /* Initialize repeater
+    // Initialize repeater
     $('#programmation-wrapper').repeater({
         initEmpty: false,
         isFirstItemUndeletable: true,
@@ -306,7 +318,38 @@ document.addEventListener('DOMContentLoaded', () => {
         hide: function(e) {
             $(this).slideUp(e);
         }
-    });*/
+    });
 });
+// Photo treatment
+document.getElementById('photo').onchange = function(event) {
+    var file = event.target.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var preview = document.getElementById('preview');
+            preview.innerHTML = `
+                <img src="${e.target.result}" alt="Image Preview" width="100"/>
+                <div class="icon-container">
+                    <div class="icon" id="edit-icon">
+                        <img src="{{asset('assets/images/edit.png')}}" alt="Edit">
+                    </div>
+                    <div class="icon" id="delete-icon">
+                        <img src="{{asset('assets/images/delete.png')}}" alt="Delete">
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('edit-icon').onclick = function() {
+                document.getElementById('photo').click();
+            };
+
+            document.getElementById('delete-icon').onclick = function() {
+                preview.innerHTML = '';
+                document.getElementById('photo').value = '';
+            };
+        };
+        reader.readAsDataURL(file);
+    }
+};
 </script>
 @endsection

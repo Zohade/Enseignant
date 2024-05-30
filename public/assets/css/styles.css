@@ -153,3 +153,7 @@ header {
     font-size: 1.3rem;
     font-family: "Berline", serif;
 }
+ html {
+     -webkit-text-size-adjust: 100%;
+     text-size-adjust: 100%;
+ }

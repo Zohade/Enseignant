@@ -30,13 +30,11 @@ class AuthController extends Controller
             ];
             if (Auth::attempt($credentials)) {
                  $user = User::where('email', $request->input('Son_mail'))
-                ->orWhere('phone_number', $request->input('Son_mail'))
                 ->first();
                 if($user->statut==1){
                     $request->session()->regenerate();
-                     session()->put(["user" => $user]);
-                    return view('dash');
-
+                     session()->put("user" ,$user);
+                    return to_route('dash');
                 }else{
                     return to_route('login')->withErrors('Vérifiez votre adresse mail pour valider votre compte');
                 }
