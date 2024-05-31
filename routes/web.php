@@ -32,4 +32,4 @@ Route::get('/index', function () {
 })->name('dash')->middleware('auth');
 
     //Publication
-Route::resource('publication', PublicationController::class);
+Route::resource('publication', PublicationController::class)->middleware('auth');

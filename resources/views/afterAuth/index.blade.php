@@ -13,11 +13,11 @@
                     {{ session('success') }}
                 </div>
             @endif
-            @if ($errors->any())
+             @if ($errors->has('texte') || $errors->has('photo'))
                 <div class="alert alert-danger">
                     <ul>
                         @foreach ($errors->all() as $error)
-                          <li>  {{ $error }}</li>
+                            <li>{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
@@ -102,16 +102,27 @@
             </div>
         </div>
 <!-- Document Modal form-->
+<div class="body">
     <div id="modalDocument" class="modal">
         <div class="modal-content">
+
             <span class="close">&times;</span>
             <div class="form-container">
                 <form id="document-form" action="{{route('publication.store')}}" method="POST" enctype="multipart/form-data">
                     @csrf
+                     @if ($errors->any() && session('last_submitted') == 'document')
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                  <li>  {{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <h2>Soumettre un Document</h2>
                     <label for="doc-type">Type de document :</label>
                     <select id="doc-type" name="type" required>
-                        <option value="">Sélectionner le type</option>
+                        <option value="">--Sélectionner le type--</option>
                         <option value="guide">Guide</option>
                         <option value="fiche">Fiche</option>
                     </select>
@@ -124,12 +135,13 @@
                         <input type="file" id="file" name="document" required>
                     </div>
 
-                    <div id="common-fields" class="conditional-fields">
+                    <div id="common-fields">
                         <label for="description">Description :</label>
                         <textarea id="description" name="description"></textarea>
 
                         <label for="class">Classe :</label>
                         <select name="classe" id="class">
+                            <option value="">--Choisissez une classe--</option>
                             <option value="CI">CI</option>
                             <option value="CP">CP</option>
                             <option value="CE1">CE1</option>
@@ -139,12 +151,12 @@
                         </select>
                     </div>
 
-                    <div id="fiche-fields" class="conditional-fields">
+                    <div id="fiche-fields" class="conditional-fields" style="display: none;">
                         <label for="subject">Matière :</label>
                         <input type="text" id="subject" name="matiere">
 
                         <label for="learning-situation">Situation d'apprentissage :</label>
-                        <textarea id="learning-situation" name="SA"></textarea>
+                        <input type="text" id="learning-situation" name="SA">
                     </div>
 
                     <label for="paid">Document payant :</label>
@@ -152,11 +164,10 @@
                         <input type="checkbox" id="paid" name="paid">
                         <span class="slider round"></span>
                     </label>
-                    <!--affiche le prix du document si le document est payant-->
-                    <div  style="display: none" id="PriceDoc">
-                        <label for="prix">
-                            Prix du document
-                        </label>
+
+                    <!-- Affiche le prix du document si le document est payant -->
+                    <div id="priceDoc" style="display: none;">
+                        <label for="prix">Prix du document</label>
                         <input type="number" name="priceDoc" id="prix" min="0">
                     </div>
                     <button type="submit" name="DocumentSoumission">Soumettre</button>
@@ -164,11 +175,22 @@
             </div>
         </div>
     </div>
+
+
 <!-- Formation Modal -->
     <div id="modalFormation" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <div class="form-container">
+            @if ($errors->any() && session('last_submitted') == 'formation')
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                          <li>  {{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <form id="formation-form" action="{{route('publication.store')}}" method="POST">
                 @csrf
                 <h2>Programmez une Formation</h2>
@@ -176,17 +198,20 @@
                 <input type="text" name="titreForm" placeholder="Titre de la formation">
                 <label for="auteur"> Auteur</label>
                 <select name="auteur" id="auteur">
+                    <option value="">--Choisissez un auteur--</option>
                     <option value="Vous">Vous</option>
                     <option value="Ministere">Ministère</option>
                     <option value="Circonscription">Circonscription</option>
                 </select>
                 <label for="desc">Description</label>
-                <textarea name="desc" id="desc" cols="30" rows="10">Une petite description</textarea>
-                <div>
+                <textarea name="desc" id="desc" cols="30" rows="2" placeholder="Une petite description"></textarea>
+                <div class="date">
                     <label for="dateDebut">
+                        Date de début
                         <input type="date" name="DateDebut" placeholder="Date début">
                     </label>
                     <label for="dateFin">
+                        Date de fin
                         <input type="date" name="DateFin" placeholder="Date fin">
                     </label>
                 </div>
@@ -228,25 +253,24 @@
                         </label>
                         <input type="number" name="priceFor" id="prix" min="0">
                     </div>
-                    <input type="submit" value="Programmer" name="FormationSoumission">
+                    <button type="submit" name="FormationSoumission">Programmer</button>
             </form>
         </div>
     </div>
 </div>
-
+</div>
 @endsection
 @section('script')
 <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/vendor/jquery/repeat/jquery.input.js') }}"></script>
 <script src="{{ asset('assets/vendor/jquery/repeat/lib.js') }}"></script>
 <script src="{{ asset('assets/vendor/jquery/repeat/repeater.js') }}"></script>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const docTypeSelect = document.getElementById('doc-type');
-    const guideFields = document.getElementById('guide-fields');
     const ficheFields = document.getElementById('fiche-fields');
-    const pricedoc = document.getElementById('PriceDoc');
+    const paidCheckbox = document.getElementById('paid');
+    const priceDoc = document.getElementById('priceDoc');
     const pricefor=document.getElementById('PriceFor');
     const payant = document.getElementById('paid');
     const ForPayant=document.getElementById('forpaid');
@@ -259,24 +283,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       })
 
-    payant.addEventListener('click', function() {
-        if (this.checked) {
-            pricedoc.style.display = 'block';
-        } else {
-            pricedoc.style.display = 'none';
-        }
-    });
-
-    docTypeSelect.addEventListener('change', function() {
-        if (this.value === 'guide') {
-            guideFields.style.display = 'block';
-            ficheFields.style.display = 'none';
-        } else if (this.value === 'fiche') {
-            guideFields.style.display = 'none';
+   docTypeSelect.addEventListener('change', function() {
+        if (this.value === 'fiche') {
             ficheFields.style.display = 'block';
         } else {
-            guideFields.style.display = 'none';
             ficheFields.style.display = 'none';
+        }
+    });
+     paidCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            priceDoc.style.display = 'block';
+        } else {
+            priceDoc.style.display = 'none';
         }
     });
 
