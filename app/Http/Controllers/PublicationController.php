@@ -3,13 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PublicationRequest;
+use App\Models\Document;
+use App\Models\Formation;
 use App\Models\Post;
 use App\Models\Publication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\ClamAVScanner;
+use Illuminate\Routing\Route;
 
 class PublicationController extends Controller
 {
+    protected $clamAVScanner;
+
+    public function __construct(ClamAVScanner $clamAVScanner)
+    {
+        $this->clamAVScanner = $clamAVScanner;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -31,27 +41,123 @@ class PublicationController extends Controller
     public function store(PublicationRequest $request)
     {
        if ($request->has('DocumentSoumission')) {
-          $this->storeDocument(new PublicationRequest($request->all()));
+          $retour=$this->storeDocument(new PublicationRequest($request->all()));
             session(['last_submitted' => 'document']);
         } elseif ($request->has('FormationSoumission')) {
-            $this->storeFormation(new PublicationRequest($request->all()));
+            $retour=$this->storeFormation(new PublicationRequest($request->all()));
             session(['last_submitted' => 'formation']);
         } else {
-            $this->storePost(new PublicationRequest($request->all()));
+            $retour=$this->storePost(new PublicationRequest($request->all()));
             session(['last_submitted' => 'post']);
+        }
+        if($retour==1){
+            return to_route('dash')->with('success', 'Votre Publication a été bien soumis');
+        }else{
+            return redirect()->back()->withErrors('Une erreur est survenue');
         }
     }
 
      protected function storeDocument(PublicationRequest $request)
     {
         // Logique pour sauvegarder le document
-        $doc = $request->document;
-        dd($doc);
+    /**
+     * Traitement du fichier de document
+     * Vérifier que le document ne contienne pas des vulnérabilités
+     *Vérifier la taille du document(Max 50Mo)
+     * Nommer le document
+     */
+         try {
+
+            $file = $request->document;
+            $filePath = $file->getPathName();
+            $scanResult = $this->clamAVScanner->scanFile($filePath);
+            if ($scanResult !== true) {
+                return response()->json(['error' => 'File is infected: ' . $scanResult], 400);
+            }
+
+            if($file->getSize()<=52428800){
+                $lastPubId = Document::orderBy('id', 'desc')->first();
+                if ($lastPubId == null) {
+                    $fileId = 0;
+                } else {
+                    $fileId = $lastPubId['id'];
+                }
+                $Docname = "Minsihoue.doc" . ($fileId + 1) . '.' . $file->extension();
+                if($request->type=='fiche'){
+                    $name = $file->storeAs('document/fiche', $Docname, 'public');
+                }elseif($request->type=="guide"){
+                    $name = $file->storeAs('document/guide', $Docname, 'public');
+                }
+                DB::beginTransaction();
+                $doc = Document::create([
+                    'type_doc'=>$request->type,
+                    'titre'=>$request->titre,
+                    'fichier'=>$name,
+                    'desc'=>$request->description,
+                    'classe'=>$request->classe,
+                    'payant'=>($request->paid=='checked')?1:0,
+                    'prix'=>($request->paid=='checked')?$request->priceDoc:0,
+                    'matiere'=>($request->type=='fiche')?$request->matiere:'null',
+                    'SA'=>($request->type=='fiche')?$request->SA:'null',
+                ]);
+                $publication = new Publication([
+                        'user_id' => session('user')['id'],
+                        'statutPub' => (session('user')['grade']=='instituteur')?'attente':'valide',
+                        'postable_id' => $doc->id,
+                        'postable_type' => Document::class,
+                ]);
+                $publication->save();
+                DB::commit();
+
+                return 1;
+            }else{
+                return 0;
+            }
+
+    } catch (\Throwable $th) {
+            die('erreur ' . $th->getMessage());
+    }
     }
 
     protected function storeFormation(PublicationRequest $request)
     {
         // Logique pour sauvegarder la formation
+        try {
+            if($request->paid=='checked'){
+                $payant=True;
+                $prix=$request->priceFor;
+            }else{
+                $payant=false;
+                $prix=0;
+            }
+            if(session('user')['grade']=='instituteur'){
+                $statut = "attente";
+            }else{
+                $statut = 'valide';
+            }
+            DB::beginTransaction();
+            $formation = Formation::create([
+                'titre'=>$request->titreForm,
+                'formateur'=>$request->auteur,
+                'desc'=>$request->desc,
+                'dateDebut'=>$request->DateDebut,
+                'dateFin'=>$request->DateFin,
+                'payant'=>$payant,
+                'prix'=>$prix,
+            ]);
+            $publication = new Publication([
+                'user_id' => session('user')['id'],
+                'statutPub' => $statut,
+                'postable_id' => $formation->id,
+                'postable_type' => Formation::class,
+            ]);
+            $publication->save();
+            DB::commit();
+            return 1;
+        } catch (\Throwable $th) {
+            die(' Problème : ' . $th->getMessage());
+        }
+
     }
 
     protected function storePost(PublicationRequest $request)
@@ -99,7 +205,7 @@ class PublicationController extends Controller
                     ]);
                     $publication->save();
                 DB::commit();
-                    return to_route('dash')->with('success', 'Publication effectuée');
+            return 1;
         } catch (\Throwable $th) {
             DB::rollBack();
             die('Une erreur s\'est produite.'.$th->getMessage());

@@ -30,4 +30,12 @@ class Publication extends Model
     {
         return $this->morphTo();
     }
+     public function formation()
+    {
+        return $this->morphTo();
+    }
+     public function document()
+    {
+        return $this->morphTo();
+    }
 }

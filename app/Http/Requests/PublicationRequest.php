@@ -19,7 +19,7 @@ class PublicationRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules():array
     {
         if ($this->has('PostSoumission')) {
             return [
@@ -51,7 +51,7 @@ class PublicationRequest extends FormRequest
         }
 
     }
-    public function messages():array
+    public function messages()
     {
         if($this->has('PostSoumission')){
             return [

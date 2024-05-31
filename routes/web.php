@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AcceuilControlleur;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\VilleController;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('index');
-});
+})->name('first');
 
 Route::get('/login', [AuthController::class,'login'])->name('login');
 Route::post('/login', [AuthController::class,'loginPost'])->name('loginPost');
@@ -27,9 +28,11 @@ Route::post("newpasschange", [AuthController::class,"newpasschange"])->name("new
 //route Ajax
 Route::get('/get-villes/{departementId}', [DepartementController::class, 'getVilles']);
 Route::get('/get-arrondissements/{villeId}', [VilleController::class, 'getArrondissements']);
-Route::get('/index', function () {
-    return view('afterAuth.index');
-})->name('dash')->middleware('auth');
+
+Route::middleware('auth')->group(function () {
+    //route de base
+    Route::get('/index', [AcceuilControlleur::class, 'index'])->name('dash');
 
     //Publication
-Route::resource('publication', PublicationController::class)->middleware('auth');
+    Route::resource('publication', PublicationController::class);
+});

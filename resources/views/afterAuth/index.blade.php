@@ -9,11 +9,11 @@
                 <div class="create-post-input">
                     <form action="{{route('publication.store')}}" method="POST" enctype="multipart/form-data">
                          @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-             @if ($errors->has('texte') || $errors->has('photo'))
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+            @if ($errors->has('texte') || $errors->has('photo'))
                 <div class="alert alert-danger">
                     <ul>
                         @foreach ($errors->all() as $error)
