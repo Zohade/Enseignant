@@ -18,7 +18,7 @@
        </div>
        <div class="navbar-center">
         <ul>
-            <li><a href="#" class="active-link"><img src="{{asset('assets/images/home.png')}}" alt="home"> <span>Accueil</span></a></li>
+            <li><a href="{{route('dash')}}" class="active-link"><img src="{{asset('assets/images/home.png')}}" alt="home"> <span>Accueil</span></a></li>
             <li><a href="#"><img src="{{asset('assets/images/network.png')}}" alt="network"> <span>Mes amis</span></a></li>
             <li><a href="#"><img src="{{asset('assets/images/jobs.png')}}" alt="jobs"> <span>Actualité</span></a></li>
             <li><a href="#"><img src="{{asset('assets/images/message.png')}}" alt="message"> <span>Messages</span></a></li>
@@ -40,15 +40,10 @@
                 <img src="{{$avatar}}">
                 <div>
                     <h3>{{session('user')['name']}}</h3>
-                    <a href="#">Voir votre profil</a>
+                    <a href="{{route('profil.index')}}">Voir votre profil</a>
                 </div>
             </div>
             <hr>
-            <a href="#" class="profile-menu-link">
-                <img src="{{asset('assets/images/feedback.png')}}">
-                <p>Give Feedback</p>
-                <span>></span>
-            </a>
             <a href="#" class="profile-menu-link">
                 <img src="{{asset('assets/images/setting.png')}}">
                 <p>Paramètres</p>

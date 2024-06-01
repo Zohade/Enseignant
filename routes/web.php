@@ -3,6 +3,7 @@
 use App\Http\Controllers\AcceuilControlleur;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepartementController;
+use App\Http\Controllers\ProfilControleur;
 use App\Http\Controllers\VilleController;
 use App\Http\Controllers\PublicationController;
 use App\Models\Departement;
@@ -35,4 +36,5 @@ Route::middleware('auth')->group(function () {
 
     //Publication
     Route::resource('publication', PublicationController::class);
+    Route::resource("profil", ProfilControleur::class);
 });
