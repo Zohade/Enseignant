@@ -13,6 +13,7 @@ class Publication extends Model
         'statutPub',
         'postable_type',
         'postable_id',
+        'datePub',
     ];
         public function __construct(array $attributes = [])
     {
