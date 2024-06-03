@@ -36,5 +36,6 @@ Route::middleware('auth')->group(function () {
 
     //Publication
     Route::resource('publication', PublicationController::class);
-    Route::resource("profil", ProfilControleur::class);
+    Route::resource("profil", ProfilControleur::class)->except('index');
+    Route::get('profil/index/{userId}', [ProfilControleur::class, 'index'])->name('profil.index');
 });

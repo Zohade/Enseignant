@@ -1,0 +1,78 @@
+<link rel="stylesheet" href="{{ asset('assets/css/style_dash.css') }}">
+<nav class="navbar">
+    <div class="navbar-left">
+        <a href="index.html" class="logo"><img src="{{ asset('assets/images/logo.png') }}" alt="logo"></a>
+        <div class="search-box">
+            <img src="{{ asset('assets/images/search.png') }}">
+            <input type="text" placeholder="Rechercher">
+        </div>
+    </div>
+    <div class="navbar-center">
+        <ul>
+            <li><a href="{{ route('dash') }}" class="active-link"><img src="{{ asset('assets/images/home.png') }}"
+                        alt="home"> <span>Accueil</span></a></li>
+            <li><a href="#"><img src="{{ asset('assets/images/network.png') }}" alt="network"> <span>Mes
+                        amis</span></a></li>
+            <li><a href="#"><img src="{{ asset('assets/images/jobs.png') }}" alt="jobs">
+                    <span>Actualité</span></a></li>
+            <li><a href="#"><img src="{{ asset('assets/images/message.png') }}" alt="message">
+                    <span>Messages</span></a></li>
+            <li><a href="#"><img src="{{ asset('assets/images/notification.png') }}" alt="notification">
+                    <span>Notifications</span></a></li>
+        </ul>
+    </div>
+    <div class="navbar-right">
+        <div class="online">
+            @php
+                $avatar = Storage::url(session('user')['photo']);
+            @endphp
+            <img src="{{ $avatar }}" class="nav-profile-img" onclick="toggleMenu()">
+        </div>
+    </div>
+    <!----Dropdown menu-->
+    <div class="profile-menu-wrap" id="profileMenu">
+        <div class="profile-menu">
+            <div class="user-info">
+                <img src="{{ $avatar }}">
+                <div>
+                    <h3>{{ session('user')['name'] }}</h3>
+                    <a href="{{ route('profil.index', ['userId' => session('user')['id']]) }}">Voir votre profil</a>
+                </div>
+            </div>
+            <hr>
+            <a href="#" class="profile-menu-link">
+                <img src="{{ asset('assets/images/setting.png') }}">
+                <p>Paramètres</p>
+                <span>></span>
+            </a>
+            <a href="#" class="profile-menu-link">
+                <img src="{{ asset('assets/images/help.png') }}">
+                <p>Aide et support</p>
+                <span>></span>
+            </a>
+            <a href="#" class="profile-menu-link">
+                <img src="{{ asset('assets/images/display.png') }}">
+                <p>Display & Accessibility</p>
+                <span>></span>
+            </a>
+            <a href="#" class="profile-menu-link" id="logout-link">
+                <img src="{{ asset('assets/images/logout.png') }}">
+                <p>Deconnexion</p>
+                <span>></span>
+            </a>
+            <!-- The Modal -->
+            <div id="logoutModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <p style="color:black">Êtes-vous sûr de vouloir vous déconnecter ?</p>
+                    <button id="confirm-logout">Oui</button>
+                    <button id="cancel-logout">Non</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+</nav>
