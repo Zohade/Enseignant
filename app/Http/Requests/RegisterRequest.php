@@ -30,7 +30,7 @@ class RegisterRequest extends FormRequest
             "departement"=>"required|exists:departements,id",
             "ville"=>"required|exists:villes,id",
             "arrondissement"=>"required|exists:arrondissements,id",
-            "grade"=> "required",
+            "grade"=> "required|in:instituteur,cpins directeur",
         ];
     }
     public function messages(): array{

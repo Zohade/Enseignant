@@ -6,6 +6,7 @@ use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\ProfilControleur;
 use App\Http\Controllers\VilleController;
 use App\Http\Controllers\PublicationController;
+use App\Http\Controllers\UserController;
 use App\Models\Departement;
 use App\Models\Publication;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function () {
 
     //Publication
     Route::resource('publication', PublicationController::class);
-    Route::resource("profil", ProfilControleur::class)->except('index');
+    Route::post('/profil', [ProfilControleur::class, 'store'])->name('profil.store');
     Route::get('profil/index/{userId}', [ProfilControleur::class, 'index'])->name('profil.index');
+    Route::resource('user', UserController::class);
 });

@@ -10,5 +10,7 @@ class Circonscription extends Model
     use HasFactory;
     protected $fillable = [
         'nom',
+        'ville_id',
+        'user_id',
     ];
 }

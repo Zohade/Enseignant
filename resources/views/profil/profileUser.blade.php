@@ -3,12 +3,26 @@
 
 <head>
     <meta charset="utf-8">
-
     <title>Mon profil</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/profil.css') }}">
+    <script src="{{ asset('assets/vendor/cropper/cropper.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('assets/vendor/cropper/cropper.css') }}">
+    <style>
+        #photoPreview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: none;
+        }
 
+        .img-container img {
+            max-width: 100%;
+            max-height: 60vh;
+        }
+    </style>
 </head>
 
 <body>
@@ -17,33 +31,32 @@
         $avatar = Storage::url($user['photo']);
     @endphp
     @include('template.menu')
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <div class="container bootstrap snippets bootdeys">
         <div class="row" id="user-profile">
             <div class="col-lg-3 col-md-4 col-sm-4">
                 <div class="main-box clearfix">
-                    <h2>{{ $user['name'] }} </h2>
+                    <h2>{{ $user['name'] }}</h2>
                     <div class="profile-status">
                         <i class="fa fa-check-circle"></i> En ligne
                     </div>
                     <span class="label label-danger">Completez votre inscription</span>
-                    <img src="{{ $avatar }}" alt class="profile-img img-responsive center-block">
-                    <i class="fa fa-camera" aria-hidden="true" class="profile-img img-responsive center-block"></i>
+                    <img src="{{ $avatar }}" alt class="profile-img img-responsive center-block" id="ImageBase">
+                    <!--bouton pour déclencher le form de modification photo-->
+                    <button id="modifierPhoto" title="Modifier photo" style="border: none">
+                        <i class="fa fa-camera-retro fa-lg"></i> Modifier la photo
+                    </button>
+                    <!-- Formulaire de modification de la photo-->
+                    <form action="{{ route('profil.store') }}" method="POST" enctype="multipart/form-data"
+                        id="form">
+                        @csrf
+                        <input type="file" id="photoInput" name="photo" style="display: none;" accept="image/*"
+                            data-action="{{ route('profil.store') }}">
+                    </form>
+                    <button id="buttonOK" style="display: none">Continuez</button>
+                    <img id="photoPreview" src="#" alt="Prévisualisation de la photo">
                     <div class="profile-label">
                         <span class="label label-danger">{{ $user['grade'] }}</span>
                     </div>
-                    {{-- <div class="profile-stars">
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star-o"></i>
-                        <span>Super User</span>
-                    </div>
-                    <div class="profile-since">
-                        Membre depuis le :
-                        {{ $user['created_at']->translatedFormat('D d F Y') }}
-                    </div> --}}
                     <div class="profile-details">
                         <ul class="fa-ul">
                             <li><i class="fa-li fa fa-truck"></i>Orders: <span>456</span></li>
@@ -52,7 +65,7 @@
                         </ul>
                     </div>
                     <div class="profile-message-btn center-block text-center">
-                        <a href="#" class="btn btn-success">
+                        <a href="{{ route('user.index') }}" class="btn btn-success">
                             <i class="fa fa-envelope"></i> Completer votre inscription
                         </a>
                     </div>
@@ -110,19 +123,16 @@
                                     ok
                                 </div>
                             </div>
-
                         </div>
                         <div class="col-sm-4 profile-social">
                             <ul class="fa-ul">
                                 <li><i class="fa-li fa fa-phone-square"></i><a
                                         href="tel:+229{{ $user['phone_number'] }}">{{ $user['phone_number'] }}</a>
                                 </li>
-                                <li><i class="fa-li fa fa-whatsapp "></i>
-                                    <a href="https://wa.me/{{ $user['phone_number'] }}">rendre public</a>
-                                </li>
-                                <li><i class="fa-li fa fa-envelope" aria-hidden="true"></i>
-                                    <a href="mailto:{{ $user['email'] }}">rendre public</a>
-                                </li>
+                                <li><i class="fa-li fa fa-whatsapp"></i><a
+                                        href="https://wa.me/{{ $user['phone_number'] }}">rendre public</a></li>
+                                <li><i class="fa-li fa fa-envelope" aria-hidden="true"></i><a
+                                        href="mailto:{{ $user['email'] }}">rendre public</a></li>
                             </ul>
                         </div>
                     </div>
@@ -175,14 +185,119 @@
                                             </tr>
                                             <tr>
                                                 <td class="text-center">
-                                                    <i class="fa fa-graduation-cap" aria-hidden="true"
-                                                        title="formation"></i>
+                                                    <i class="fa fa-book" aria-hidden="true" title="document"></i>
                                                 </td>
                                                 <td>
                                                     John Doe changed order status from
                                                 </td>
                                                 <td>
-                                                    <span class="label label-danger">Rejetté</span>
+                                                    <span class="label label-primary">En attente</span>
+                                                </td>
+                                                <td>
+                                                    2014/08/08 12:08
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"
+                                                        title="post"></i>
+                                                </td>
+                                                <td>
+                                                    John Doe posted a comment in <a href="#">Lost in Translation
+                                                        opening scene</a> discussion.
+                                                </td>
+                                                <td>
+                                                    <span class="label label-success">Validé</span>
+                                                </td>
+                                                <td>
+                                                    2014/08/08 12:08
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <i class="fa fa-book" aria-hidden="true" title="document"></i>
+                                                </td>
+                                                <td>
+                                                    John Doe changed order status from
+                                                </td>
+                                                <td>
+                                                    <span class="label label-primary">En attente</span>
+                                                </td>
+                                                <td>
+                                                    2014/08/08 12:08
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"
+                                                        title="post"></i>
+                                                </td>
+                                                <td>
+                                                    John Doe posted a comment in <a href="#">Lost in Translation
+                                                        opening scene</a> discussion.
+                                                </td>
+                                                <td>
+                                                    <span class="label label-success">Validé</span>
+                                                </td>
+                                                <td>
+                                                    2014/08/08 12:08
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <i class="fa fa-book" aria-hidden="true" title="document"></i>
+                                                </td>
+                                                <td>
+                                                    John Doe changed order status from
+                                                </td>
+                                                <td>
+                                                    <span class="label label-primary">En attente</span>
+                                                </td>
+                                                <td>
+                                                    2014/08/08 12:08
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"
+                                                        title="post"></i>
+                                                </td>
+                                                <td>
+                                                    John Doe posted a comment in <a href="#">Lost in Translation
+                                                        opening scene</a> discussion.
+                                                </td>
+                                                <td>
+                                                    <span class="label label-success">Validé</span>
+                                                </td>
+                                                <td>
+                                                    2014/08/08 12:08
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <i class="fa fa-book" aria-hidden="true" title="document"></i>
+                                                </td>
+                                                <td>
+                                                    John Doe changed order status from
+                                                </td>
+                                                <td>
+                                                    <span class="label label-primary">En attente</span>
+                                                </td>
+                                                <td>
+                                                    2014/08/08 12:08
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"
+                                                        title="post"></i>
+                                                </td>
+                                                <td>
+                                                    John Doe posted a comment in <a href="#">Lost in Translation
+                                                        opening scene</a> discussion.
+                                                </td>
+                                                <td>
+                                                    <span class="label label-success">Validé</span>
                                                 </td>
                                                 <td>
                                                     2014/08/08 12:08
@@ -190,40 +305,73 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <a href="#" class="btn btn-success pull-right">Voir +</a>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="tab-friends">
-                                <table class="table">
-                                    <thead>
-                                        <th>Type</th>
-                                        <th>Titre</th>
-                                        <th>Auteur</th>
-                                        <th>Prix</th>
-                                        <th>Date</th>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="text-center">
-                                                Fiche
-                                            </td>
-                                            <td>
-                                                John Doe changed order status from
-                                            </td>
-                                            <td>
-                                                John
-                                            </td>
-                                            <td>
-                                                0 FCFA
-                                            </td>
-                                            <td>
-                                                2014/08/08 12:08
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <br>
-                                <a href="#" class="btn btn-success pull-right">Voir +</a>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th><span>Type</span></th>
+                                                <th><span>Contenu</span></th>
+                                                <th><span>Date</span></th>
+                                                <th><span>Status</span></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <a href="#" class="user-link">Lorem</a>
+                                                </td>
+                                                <td>25</td>
+                                                <td>2012/05/06</td>
+                                                <td class="text-center">
+                                                    <span class="label label-default">Inactive</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <a href="#" class="user-link">Ipsum</a>
+                                                </td>
+                                                <td>25</td>
+                                                <td>2012/05/06</td>
+                                                <td class="text-center">
+                                                    <span class="label label-default">Inactive</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <a href="#" class="user-link">Dolor</a>
+                                                </td>
+                                                <td>25</td>
+                                                <td>2012/05/06</td>
+                                                <td class="text-center">
+                                                    <span class="label label-default">Inactive</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <a href="#" class="user-link">Amet</a>
+                                                </td>
+                                                <td>25</td>
+                                                <td>2012/05/06</td>
+                                                <td class="text-center">
+                                                    <span class="label label-default">Inactive</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <a href="#" class="user-link">Sedit</a>
+                                                </td>
+                                                <td>25</td>
+                                                <td>2012/05/06</td>
+                                                <td class="text-center">
+                                                    <span class="label label-default">Inactive</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div class="tab-pane fade" id="tab-chat">
                                 <div class="conversation-wrapper">
@@ -234,113 +382,95 @@
                                                 style="overflow: hidden; width: auto; height: 340px;">
                                                 <div class="conversation-item item-left clearfix">
                                                     <div class="conversation-user">
-                                                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                                            class="img-responsive" alt>
+                                                        <img src="https://bootdey.com/img/Content/user_1.jpg"
+                                                            alt="Male">
                                                     </div>
                                                     <div class="conversation-body">
-                                                        <div class="name">
-                                                            Ryan Gossling
-                                                        </div>
-                                                        <div class="time hidden-xs">
-                                                            September 21, 2013 18:28
-                                                        </div>
+                                                        <div class="name">John</div>
+                                                        <div class="time hidden-xs">21:00</div>
                                                         <div class="text">
-                                                            I don't think they tried to market it to the billionaire,
-                                                            spelunking, base-jumping crowd.
+                                                            Hello!
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="conversation-item item-right clearfix">
                                                     <div class="conversation-user">
-                                                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                                            class="img-responsive" alt>
+                                                        <img src="https://bootdey.com/img/Content/user_2.jpg"
+                                                            alt="Female">
                                                     </div>
                                                     <div class="conversation-body">
-                                                        <div class="name">
-                                                            Mila Kunis
-                                                        </div>
-                                                        <div class="time hidden-xs">
-                                                            September 21, 2013 12:45
-                                                        </div>
+                                                        <div class="name">Alice</div>
+                                                        <div class="time hidden-xs">21:00</div>
                                                         <div class="text">
-                                                            Normally, both your asses would be dead as fucking fried
-                                                            chicken, but you happen to pull this shit while I'm in a
-                                                            transitional period so I don't wanna kill you, I wanna help
-                                                            you.
+                                                            Hi, John
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="conversation-item item-right clearfix">
                                                     <div class="conversation-user">
-                                                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                                            class="img-responsive" alt>
+                                                        <img src="https://bootdey.com/img/Content/user_2.jpg"
+                                                            alt="Female">
                                                     </div>
                                                     <div class="conversation-body">
-                                                        <div class="name">
-                                                            Mila Kunis
-                                                        </div>
-                                                        <div class="time hidden-xs">
-                                                            September 21, 2013 12:45
-                                                        </div>
+                                                        <div class="name">Alice</div>
+                                                        <div class="time hidden-xs">21:00</div>
                                                         <div class="text">
-                                                            Normally, both your asses would be dead as fucking fried
-                                                            chicken, but you happen to pull this shit while I'm in a
-                                                            transitional period so I don't wanna kill you, I wanna help
-                                                            you.
+                                                            How are you?
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="conversation-item item-left clearfix">
                                                     <div class="conversation-user">
-                                                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                                            class="img-responsive" alt>
+                                                        <img src="https://bootdey.com/img/Content/user_1.jpg"
+                                                            alt="Male">
                                                     </div>
                                                     <div class="conversation-body">
-                                                        <div class="name">
-                                                            Ryan Gossling
-                                                        </div>
-                                                        <div class="time hidden-xs">
-                                                            September 21, 2013 18:28
-                                                        </div>
+                                                        <div class="name">John</div>
+                                                        <div class="time hidden-xs">21:00</div>
                                                         <div class="text">
-                                                            I don't think they tried to market it to the billionaire,
-                                                            spelunking, base-jumping crowd.
+                                                            I'm good. How are you?
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="conversation-item item-left clearfix">
+                                                    <div class="conversation-user">
+                                                        <img src="https://bootdey.com/img/Content/user_1.jpg"
+                                                            alt="Male">
+                                                    </div>
+                                                    <div class="conversation-body">
+                                                        <div class="name">John</div>
+                                                        <div class="time hidden-xs">21:00</div>
+                                                        <div class="text">
+                                                            I'm looking for a job.
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="conversation-item item-right clearfix">
                                                     <div class="conversation-user">
-                                                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                                            class="img-responsive" alt>
+                                                        <img src="https://bootdey.com/img/Content/user_2.jpg"
+                                                            alt="Female">
                                                     </div>
                                                     <div class="conversation-body">
-                                                        <div class="name">
-                                                            Mila Kunis
-                                                        </div>
-                                                        <div class="time hidden-xs">
-                                                            September 21, 2013 12:45
-                                                        </div>
+                                                        <div class="name">Alice</div>
+                                                        <div class="time hidden-xs">21:00</div>
                                                         <div class="text">
-                                                            Normally, both your asses would be dead as fucking fried
-                                                            chicken, but you happen to pull this shit while I'm in a
-                                                            transitional period so I don't wanna kill you, I wanna help
-                                                            you.
+                                                            Sorry to hear that.
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="slimScrollBar"
-                                                style="width: 7px; position: absolute; top: 0px; opacity: 0.4; display: block; border-radius: 7px; z-index: 99; right: 1px; background: rgb(0, 0, 0);">
+                                                style="background: rgb(232, 230, 230); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px;">
                                             </div>
                                             <div class="slimScrollRail"
-                                                style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(51, 51, 51);">
+                                                style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="conversation-new-message">
                                         <form>
                                             <div class="form-group">
-                                                <textarea class="form-control" rows="2" placeholder="Enter your message..."></textarea>
+                                                <textarea class="form-control" placeholder="Enter message..." rows="2"></textarea>
                                             </div>
                                             <div class="clearfix">
                                                 <button type="submit" class="btn btn-success pull-right">Send
@@ -350,16 +480,118 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="tab-pane fade" id="tab-settings">
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="profileFirstName" class="col-sm-2 control-label">First
+                                            name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="profileFirstName"
+                                                placeholder="First name">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profileLastName" class="col-sm-2 control-label">Last name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="profileLastName"
+                                                placeholder="Last name">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profileEmail" class="col-sm-2 control-label">Email</label>
+                                        <div class="col-sm-10">
+                                            <input type="email" class="form-control" id="profileEmail"
+                                                placeholder="Email">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profilePassword" class="col-sm-2 control-label">Password</label>
+                                        <div class="col-sm-10">
+                                            <input type="password" class="form-control" id="profilePassword"
+                                                placeholder="Password">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="profilePassword2" class="col-sm-2 control-label">Confirm
+                                            password</label>
+                                        <div class="col-sm-10">
+                                            <input type="password" class="form-control" id="profilePassword2"
+                                                placeholder="Password">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button type="submit" class="btn btn-danger">Save</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript"></script>
-</body>
+    </div>
 
-</html>
+    <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let cropper;
+            var form = document.getElementById('form');
+
+            // Event listener for the "Modifier Photo" button
+            $('#modifierPhoto').on('click', function() {
+                $('#photoInput').click();
+            });
+
+            $('#photoInput').on('change', function(event) {
+                var image = document.getElementById('ImageBase');
+                var files = $(this)[0].files;
+                var file = files[0];
+                var url = $(this).attr('data-action');
+                if (file) {
+                    $("#buttonOK").show();
+                    // Set the source of the image and initialize the cropper
+                    $("#ImageBase").attr('src', window.URL.createObjectURL(file));
+                    if (cropper) {
+                        cropper.destroy(); // Destroy the old cropper instance
+                    }
+                    cropper = new Cropper(image, {
+                        aspectRatio: 4 / 3,
+                    });
+
+                    // Event listener for the "OK" button
+                    $("#buttonOK").off('click').on('click', function() {
+                        cropper.getCroppedCanvas().toBlob(function(blob) {
+                            var formData = new FormData(form);
+                            formData.append("croppedImage", blob);
+                            $.ajax({
+                                type: "POST",
+                                url: url,
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                                        .attr(
+                                            'content')
+                                },
+                                data: formData,
+                                processData: false, // Important for sending FormData
+                                contentType: false, // Important for sending FormData
+                                dataType: 'JSON',
+                                success: function(data) {
+                                    alert(
+                                        'Votre photo de profil a été mis à jour avec succès'
+                                    );
+                                    window.location.reload();
+                                },
+                                error: function(err) {
+                                    alert('Une erreur s\'est produite');
+                                }
+                            });
+                        });
+                    });
+                }
+            });
+        });
+    </script>

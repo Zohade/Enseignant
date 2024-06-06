@@ -11,9 +11,14 @@ use App\Models\Departement;
 use App\Models\Ville;
 use App\Models\Arrondissement;
 use App\Models\User;
+use App\Models\Classe;
+use App\Models\Groupe;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\EnvoyerMail;
+use App\Models\Circonscription;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+
 
 class AuthController extends Controller
 {
@@ -32,8 +37,16 @@ class AuthController extends Controller
                  $user = User::where('email', $request->input('Son_mail'))
                 ->first();
                 if($user->statut==1){
+
+                    if($user['grade']=='instituteur'){
+                        $info = Classe::where('user_id', $user->id)->first();
+                    }elseif($user['grade']=='directeur'){
+                        $info = Groupe::where('user_id',$user->id)->first();
+                    }elseif($user['grade']=='cpins'){
+                        $info = Circonscription::where('user_id',$user->id)->first();
+                    }
                     $request->session()->regenerate();
-                     session()->put("user" ,$user);
+                     session()->put(['user'=>$user,'info'=>$info]);
                     return to_route('dash');
                 }else{
                     return to_route('login')->withErrors('Vérifiez votre adresse mail pour valider votre compte');
@@ -75,6 +88,7 @@ class AuthController extends Controller
             ]);
             //récupération de l'id de l'utilisateur qui vient de s'inscrire
             $userId=User::where("email",$request->mail)->first()->id;
+
             //envoie de lien de confirmation par mail
             $data = [
                     'title' => 'Confirmation de compte Minsihoue',
