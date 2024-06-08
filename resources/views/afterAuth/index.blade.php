@@ -263,32 +263,7 @@
                                 <input type="date" name="DateFin" placeholder="Date fin">
                             </label>
                         </div>
-                        <!--div id="programmation-wrapper">
-                                                                                                                                                        <div class="programmation" data-repeater-list="programs">
-                                                                                                                                                            <div data-repeater-item>
-                                                                                                                                                                <label for="jour">Jour</label>
-                                                                                                                                                                <select name="jour" class="jour">
-                                                                                                                                                                    <option value="lundi">Lundi</option>
-                                                                                                                                                                    <option value="mardi">Mardi</option>
-                                                                                                                                                                    <option value="mercredi">Mercredi</option>
-                                                                                                                                                                    <option value="jeudi">Jeudi</option>
-                                                                                                                                                                    <option value="vendredi">Vendredi</option>
-                                                                                                                                                                    <option value="samedi">Samedi</option>
-                                                                                                                                                                    <option value="dimanche">Dimanche</option>
-                                                                                                                                                                </select>
-                                                                                                                                                                <label for="heureDebut">Horaire</label>
-                                                                                                                                                                <input type="text" name="horaire" class="horaire" placeholder="7h-10h">
-                                                                                                                                                                <button type="button" data-repeater-delete class="btn btn-danger" title="Supprimer ce jour">
-                                                                                                                                                                    <i class="fa fa-minus" aria-hidden="true"></i>
-                                                                                                                                                                </button>
-                                                                                                                                                            </div>
-                                                                                                                                                        </div>
-                                                                                                                                                    </div>
-                                                                                                                                                    <div>
-                                                                                                                                                        <button type="button" id="btn-add" data-repeater-create class="btn btn-primary" title="Plus de jours">
-                                                                                                                                                            <i class="fa fa-plus" aria-hidden="true"></i>
-                                                                                                                                                        </button>
-                                                                                                                                                    </div-->
+                        <!--div id="programmation-wrapper">                                                                                                                             </div-->
                         <label for="paid">Formation payante :</label>
                         <label class="switch">
                             <input type="checkbox" id="forpaid" name="paid">

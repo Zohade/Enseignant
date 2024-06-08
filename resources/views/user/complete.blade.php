@@ -1,169 +1,135 @@
-   <!DOCTYPE html>
-   <html lang="fr">
+@include('template.menu')
+<!DOCTYPE html>
+<html lang="fr">
 
-   <head>
-       <meta charset="UTF-8">
-       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <title>Completer inscription</title>
-   </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('assets/css/alert.css') }}">
+    <title>Compléter inscription</title>
+</head>
 
-   <body>
-       @include('template.menu')
-       <div class="container">
-           <h2>Complement</h2>
-           <p>Completez votre inscription pour profiter pleinement de votre plateforme</p>
-           @if (session('success'))
-               <div class="alert alert-success">
-                   {{ session('success') }}
-               </div>
-           @endif
-           @if ($errors->any())
-               <div class="alert alert-danger">
-                   <ul>
-                       @foreach ($errors->all() as $error)
-                           <li> {{ $error }}</li>
-                       @endforeach
-                   </ul>
-               </div>
-           @endif
-           <hr>
-           <form action="{{ route('signUpPost') }}" method="post">
-               @csrf
-               <div class="form-group">
-                   <input type="email" placeholder="Adresse e-mail" name="mail" value="{{ old('mail') }}"
-                       required>
-                   <input type="tel" placeholder="Numéro de téléphone" name="phone_number"
-                       value="{{ old('phone_number') }}" required>
-               </div>
-               <div class="form-group">
-                   <input type="password" placeholder="Mot de passe" name="password" required id="password">
-                   <input type="password" placeholder="Confirmer mot de passe" name="password_confirmation" required>
-               </div>
-               {{-- <div class="form-group">
-                   <select id="departement" name="departement" value="{{ old('departement') }}" required>
-                       <option>Département</option>
-                       @foreach ($departements as $key => $departement)
-                           <option value="{{ $departement->id }}">{{ $departement->name }}</option>
-                       @endforeach
-                   </select>
-                   <select id="ville" name="ville" required value="{{ old('ville') }}">
-                       <option>Ville</option>
-                       <!-- Ajoutez les options pour le mois ici -->
-                   </select>
-                   <select id="arrondissement" name="arrondissement" value="{{ old('arrondissement') }}" required>
-                       <option>Arrondissement</option>
-                       <!-- Ajoutez les options pour l'année ici -->
-                   </select>
-               </div> --}}
-               <div class="form-group">
-                   <label>Grade:</label>
-                   <input type="radio" name="grade" value="instituteur"> Instituteur
-                   <input type="radio" name="grade" value="directeur"> Directeur
-                   <input type="radio" name="grade" value="cpins"> Cp ou Inspecteur
-               </div>
-               <div class="form-group">
-                   <button type="submit" class="form-btn">S'inscrire</button>
-               </div>
-           </form>
-       </div>
-       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-       <script>
-           document.getElementById('password').addEventListener('input', function() {
-               var password = this.value;
-               var strengthMessage = document.getElementById('strengthMessage');
+<body>
+    <div id="form" class="form" data-user-grade="{{ session('user')['grade'] }}">
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li> {{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-               var strength = getPasswordStrength(password);
+        <form action="#" method="post">
+            @csrf
+            <h1>Complétez votre inscription</h1>
+            <select name="ville" id="ville">
+                <option value=""><--Villes--></option>
+                @foreach ($villes as $key => $ville)
+                    <option value="{{ $ville->id }}">{{ $ville->name }}</option>
+                @endforeach
+            </select>
+            <select id="circonscription" name="circonscription" required value="{{ old('circonscription') }}">
+                <option>circonscription</option>
+            </select>
+            <div id="AjouterC" style="display: none;">
+                <h3>Aucune circonscription n'est présente dans cette ville. Veuillez ajouter la vôtre</h3>
+                <button type="button" id="AjouterCB">Ajouter votre circonscription</button>
+            </div>
+            <select id="ecole" name="ecole" required value="{{ old('ecole') }}">
+                <option>ecole</option>
+            </select>
+            <select id="groupe" name="groupe" required value="{{ old('groupe') }}">
+                <option>groupe</option>
+            </select>
+            <select id="classe" name="classe" required value="{{ old('classe') }}">
+                <option>classe</option>
+            </select>
+        </form>
+    </div>
+    <!--Modal pour ajouter une circonscription-->
+    <div id="modalC" style="display: none">
+        <form action="{{ route('circonscription.store') }}" method="post">
+            @csrf
+            <input type="hidden" name="ville" id="ville-hidden" value="">
+            <input type="text" name="nomC" id="nomC" placeholder="Nom de la circonscription">
+            <label for="role">Votre rôle <select name="role" id="role">
+                    <option value="chef">Chef</option>
+                    <option value="collaborateur">Collaborateur</option>
+                </select>
+            </label>
+            <div id="infoChef" style="display: none">
+                <input type="text" name="nomChef" placeholder="Nom et prénom du Chef">
+                <input type="tel" name="numChef" placeholder="Numéro du Chef">
+            </div>
+            <button type="submit">Créer</button>
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(function() {
+            $('#ville').change(function() {
+                const villeId = $(this).val();
+                updateCircons(villeId);
+                $('#ville-hidden').val(villeId);
+            });
 
-               switch (strength) {
-                   case 'weak':
-                       strengthMessage.textContent = 'Faible';
-                       strengthMessage.className = 'weak';
-                       break;
-                   case 'medium':
-                       strengthMessage.textContent = 'Moyen';
-                       strengthMessage.className = 'medium';
-                       break;
-                   case 'strong':
-                       strengthMessage.textContent = 'Fort';
-                       strengthMessage.className = 'strong';
-                       break;
-                   default:
-                       strengthMessage.textContent = '';
-                       strengthMessage.className = '';
-               }
-           });
+            function updateCircons(villeId) {
+                $.ajax({
+                    url: '/get-circons/' + villeId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        const userGrade = $('#form').data('user-grade');
+                        $('#circonscription').empty();
+                        $('#circonscription').append('<option></option>');
+                        if (data && data.circons && data.circons.length === 0 && userGrade ===
+                            'cpins') {
+                            $('#AjouterC').show();
+                            $('#ville, #circonscription, #ecole, #groupe, #classe').hide();
+                        } else if (data && data.circons) {
+                            $('#AjouterC').hide();
+                            $('#ville, #circonscription, #ecole, #groupe, #classe').show();
+                            $.each(data.circons, function(key, value) {
+                                $('#circonscription').append('<option value="' + value.id +
+                                    '">' + value.nom + '</option>');
+                            });
+                        } else {
+                            console.error('Unexpected response format:', data);
+                            alert('Erreur de données: format de réponse inattendu.');
+                        }
+                    },
+                    error: function(resultat, statut, erreur) {
+                        console.error('AJAX error:', erreur);
+                        alert('Erreur: ' + erreur);
+                    }
+                });
+            }
+        });
 
-           function getPasswordStrength(password) {
-               var strength = 'weak';
-               if (password.length >= 8) {
-                   var hasUpperCase = /[A-Z]/.test(password);
-                   var hasLowerCase = /[a-z]/.test(password);
-                   var hasNumbers = /[0-9]/.test(password);
-                   var hasSpecialChars = /[!@#\$%\^\&*\)\(+=._-]/.test(password);
+        const buttonCB = document.getElementById('AjouterCB');
+        const modalC = document.getElementById('modalC');
+        const role = document.getElementById('role');
+        const infoChef = document.getElementById('infoChef');
 
-                   if (hasUpperCase + hasLowerCase + hasNumbers + hasSpecialChars >= 3) {
-                       strength = 'medium';
-                   }
-                   if (hasUpperCase + hasLowerCase + hasNumbers + hasSpecialChars === 4) {
-                       strength = 'strong';
-                   }
-               }
+        buttonCB.addEventListener('click', function() {
+            modalC.style.display = 'block';
+        });
 
-               return strength;
-           }
+        role.addEventListener('change', function() {
+            if (this.value === 'collaborateur') {
+                infoChef.style.display = 'block';
+            } else {
+                infoChef.style.display = 'none';
+            }
+        });
+    </script>
+</body>
 
-           $(function() {
-               $('#departement').change(function() {
-                   const departementId = $(this).val();
-                   updateVilles(departementId);
-               });
-
-               function updateVilles(departementId) {
-                   $.ajax({
-                       url: '/get-villes/' + departementId,
-                       type: 'GET',
-                       dataType: 'json',
-                       success: function(data) {
-                           $('#ville').empty();
-                           $('#ville').append('<option></option>');
-                           $.each(data.villes, function(key, value) {
-                               $('#ville').append('<option value="' + value.id + '">' +
-                                   value.name + '</option>');
-                           });
-                       },
-                       error: function(resultat, statut, erreur) {
-                           alert(erreur);
-                       }
-                   });
-               }
-           });
-
-           $(function() {
-               $('#ville').change(function() {
-                   const villeId = $(this).val();
-                   updateVilles(villeId);
-               });
-
-               function updateVilles(villeId) {
-                   $.ajax({
-                       url: '/get-arrondissements/' + villeId,
-                       type: 'GET',
-                       dataType: 'json',
-                       success: function(data) {
-                           $('#arrondissement').empty();
-                           $('#arrondissement').append('<option></option>');
-                           $.each(data.arrondissements, function(key, value) {
-                               $('#arrondissement').append('<option value="' + value.id + '">' +
-                                   value.name + '</option>');
-                           });
-                       },
-                       error: function(resultat, statut, erreur) {
-                           alert(erreur);
-                       }
-                   });
-               }
-           });
-       </script>
-   </body>
-
-   </html>
+</html>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Circonscription;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\CirconscriptionRequest;
+use App\Models\User;
 
 class CirconscriptionController extends Controller
 {
@@ -27,9 +29,35 @@ class CirconscriptionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CirconscriptionRequest $request)
     {
-        //
+        try {
+            if($request->role=='chef'){
+                $circonscription = Circonscription::create([
+                    'ville_id'=>$request->ville,
+                    'user_id'=>session('user')['id'],
+                    'nom'=>$request->nomC,
+                ]);
+                return back()->with(['success' => "La circonscription a été ajouté avec succès"]);
+            }elseif($request->role=='collaborateur'){
+                $user = User::where([
+                    'phone_number' => $request->numChef,
+                    'name' => $request->nomChef
+                ]);
+                if($user){
+                     $circonscription = Circonscription::create([
+                    'ville_id'=>$request->ville,
+                    'user_id'=>session('user')['id'],
+                    'nom'=>$request->nomC,
+                ]);
+                return back()->with(['success' => "La circonscription a été ajouté avec succès"]);
+                }else{
+                    return back()->withErrors('Le chef de la circonscription n\'est pas inscrit sur le site');
+                }
+            }
+        } catch (\Throwable $th) {
+            die('Une erreur s\'est produite ' . $th);
+        }
     }
 
     /**
@@ -62,5 +90,9 @@ class CirconscriptionController extends Controller
     public function destroy(Circonscription $circonscription)
     {
         //
+    }
+    public function getCircons($villeId){
+         $circons = Circonscription::where('ville_id', $villeId)->get();
+        return response()->json(['circons' => $circons]);
     }
 }

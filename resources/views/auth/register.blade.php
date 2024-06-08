@@ -1,40 +1,43 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulaire d'inscription</title>
-    <link rel="stylesheet" href="{{asset('assets/css/register.css')}}">
-    <link rel="stylesheet" href="{{asset('assets/css/alert.css')}}">
+    <link rel="stylesheet" href="{{ asset('assets/css/register.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/alert.css') }}">
 </head>
+
 <body>
     <div class="container">
         <h2>Inscription</h2>
         <p>Inscrivez-vous pour profiter pleinement de votre plateforme</p>
-         @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                           <li> {{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li> {{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <hr>
-        <form action="{{route('signUpPost')}}" method="post">
+        <form action="{{ route('signUpPost') }}" method="post">
             @csrf
             <div class="form-group">
-                <input type="text" placeholder="Nom" name="nom" value="{{old("nom")}}" required>
-                <input type="text" placeholder="Prénom" name="prenom" value="{{old("prenom")}}" required>
+                <input type="text" placeholder="Nom" name="nom" value="{{ old('nom') }}" required>
+                <input type="text" placeholder="Prénom" name="prenom" value="{{ old('prenom') }}" required>
             </div>
             <div class="form-group">
-                <input type="email" placeholder="Adresse e-mail" name="mail" value="{{old("mail")}}" required>
-                <input type="tel" placeholder="Numéro de téléphone" name="phone_number" value="{{old("phone_number")}}" required>
+                <input type="email" placeholder="Adresse e-mail" name="mail" value="{{ old('mail') }}" required>
+                <input type="tel" placeholder="Numéro de téléphone" name="phone_number"
+                    value="{{ old('phone_number') }}" required>
             </div>
             <div class="form-group">
                 <input type="password" placeholder="Mot de passe" name="password" required id="password">
@@ -43,34 +46,32 @@
             <div id="strengthMessage"></div>
             <div class="textPass">
                 <p>
-                    <ul>
-                        <li>Minimum 8 caractères</li>
-                        <li>Au moins une lettre majuscule</li>
-                        <li>Au moins une lettre miniscule</li>
-                        <li>Au moins un chiffre</li>
-                        <li>Au moins un caractère spécial</li>
-                    </ul>
+                <ul>
+                    <li>Minimum 8 caractères</li>
+                    <li>Au moins une lettre majuscule</li>
+                    <li>Au moins une lettre miniscule</li>
+                    <li>Au moins un chiffre</li>
+                    <li>Au moins un caractère spécial</li>
+                </ul>
                 </p>
             </div>
             <div class="form-group">
-                <select id="departement" name="departement" value="{{old("departement")}}" required>
+                <select id="departement" name="departement" value="{{ old('departement') }}" required>
                     <option>Département</option>
-                    @foreach($departements as $key => $departement)
-                        <option value="{{$departement->id}}">{{$departement->name}}</option>
+                    @foreach ($departements as $key => $departement)
+                        <option value="{{ $departement->id }}">{{ $departement->name }}</option>
                     @endforeach
                 </select>
-                <select id="ville" name="ville" required value="{{old("ville")}}">
+                <select id="ville" name="ville" required value="{{ old('ville') }}">
                     <option>Ville</option>
-                    <!-- Ajoutez les options pour le mois ici -->
                 </select>
-                <select id="arrondissement" name="arrondissement" value="{{old("arrondissement")}}" required>
+                <select id="arrondissement" name="arrondissement" value="{{ old('arrondissement') }}" required>
                     <option>Arrondissement</option>
-                    <!-- Ajoutez les options pour l'année ici -->
                 </select>
             </div>
             <div class="form-group">
                 <label>Grade:</label>
-                <input type="radio" name="grade" value="instituteur" > Instituteur
+                <input type="radio" name="grade" value="instituteur"> Instituteur
                 <input type="radio" name="grade" value="directeur"> Directeur
                 <input type="radio" name="grade" value="cpins"> Cp ou Inspecteur
             </div>
@@ -87,7 +88,7 @@
 
             var strength = getPasswordStrength(password);
 
-            switch(strength) {
+            switch (strength) {
                 case 'weak':
                     strengthMessage.textContent = 'Faible';
                     strengthMessage.className = 'weak';
@@ -105,6 +106,7 @@
                     strengthMessage.className = '';
             }
         });
+
         function getPasswordStrength(password) {
             var strength = 'weak';
             if (password.length >= 8) {
@@ -177,4 +179,5 @@
         });
     </script>
 </body>
+
 </html>

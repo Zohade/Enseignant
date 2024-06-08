@@ -25,12 +25,12 @@ class RegisterRequest extends FormRequest
             "nom"=>"required|alpha_num",
             "prenom"=>"required|alpha_num",
             "mail"=>"required|email|unique:users,email",
-            "phone_number"=>"required|regex:/^[4569][0-9]{7}$/",
+            "phone_number"=>"required|regex:/^[4569][0-9]{7}$/|unique:users,phone_number",
             "password"=>"required|confirmed|min:8",
             "departement"=>"required|exists:departements,id",
             "ville"=>"required|exists:villes,id",
             "arrondissement"=>"required|exists:arrondissements,id",
-            "grade"=> "required|in:instituteur,cpins directeur",
+            "grade"=> "required|in:instituteur,cpins,directeur",
         ];
     }
     public function messages(): array{
@@ -41,6 +41,7 @@ class RegisterRequest extends FormRequest
             "mail.email"=> "Votre mail n'est pas valide",
             "mail.unique"=> "Il y a déjà un compte avec cette adresse mail",
             "phone_number.required"=> "Entrez votre numéro de téléphone",
+            "phone_number.unique"=> "Il y a déjà un compte avec ce numéro de téléphone",
             "phone_number.regex"=>"le numéro de téléphone n'est pas valide",
             "password.required"=>"Entrez un mot de passe",
             "password.confirmed"=>"Confirmez le mot de passe avec le même mot de passe",

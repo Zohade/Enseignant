@@ -7,6 +7,8 @@ use App\Http\Controllers\ProfilControleur;
 use App\Http\Controllers\VilleController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CirconscriptionController;
+use App\Models\Circonscription;
 use App\Models\Departement;
 use App\Models\Publication;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +32,7 @@ Route::post("newpasschange", [AuthController::class,"newpasschange"])->name("new
 //route Ajax
 Route::get('/get-villes/{departementId}', [DepartementController::class, 'getVilles']);
 Route::get('/get-arrondissements/{villeId}', [VilleController::class, 'getArrondissements']);
+Route::get('/get-circons/{villeId}', [CirconscriptionController::class, 'getCircons']);
 
 Route::middleware('auth')->group(function () {
     //route de base
@@ -40,4 +43,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/profil', [ProfilControleur::class, 'store'])->name('profil.store');
     Route::get('profil/index/{userId}', [ProfilControleur::class, 'index'])->name('profil.index');
     Route::resource('user', UserController::class);
+    Route::resource('circonscription', CirconscriptionController::class);
 });
