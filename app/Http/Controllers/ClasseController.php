@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Classe;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ClasseRequest;
 use Illuminate\Http\Request;
 
 class ClasseController extends Controller
@@ -27,9 +28,18 @@ class ClasseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ClasseRequest $request)
     {
-        //
+         try {
+            $classe = Classe::create([
+                'nom'=>$request->classe,
+                'groupe_id'=>$request->groupe,
+                'user_id'=>session('user')['id'],
+            ]);
+            return to_route('login')->with(['success' => 'Inscription complète. Connectez-vous pour prendre en compte les modifications']);
+        } catch (\Throwable $th) {
+            die("Une erreur s'est produite " . $th->getMessage());
+        }
     }
 
     /**
@@ -62,5 +72,9 @@ class ClasseController extends Controller
     public function destroy(Classe $classe)
     {
         //
+    }
+    public function getClasses($groupeId){
+         $classes = Classe::where('groupe_id', $groupeId)->get();
+        return response()->json(['classes' => $classes]);
     }
 }

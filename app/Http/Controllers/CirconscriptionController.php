@@ -38,7 +38,7 @@ class CirconscriptionController extends Controller
                     'user_id'=>session('user')['id'],
                     'nom'=>$request->nomC,
                 ]);
-                return back()->with(['success' => "La circonscription a été ajouté avec succès"]);
+                    return to_route('login')->with(['success' => 'Inscription complète. Connectez-vous pour prendre en compte les modifications']);
             }elseif($request->role=='collaborateur'){
                 $user = User::where([
                     'phone_number' => $request->numChef,
@@ -50,7 +50,7 @@ class CirconscriptionController extends Controller
                     'user_id'=>session('user')['id'],
                     'nom'=>$request->nomC,
                 ]);
-                return back()->with(['success' => "La circonscription a été ajouté avec succès"]);
+                    return to_route('login')->with(['success' => 'Inscription complète. Connectez-vous pour prendre en compte les modifications']);
                 }else{
                     return back()->withErrors('Le chef de la circonscription n\'est pas inscrit sur le site');
                 }

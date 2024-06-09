@@ -8,9 +8,9 @@ use App\Http\Controllers\VilleController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CirconscriptionController;
-use App\Models\Circonscription;
-use App\Models\Departement;
-use App\Models\Publication;
+use App\Http\Controllers\EcoleController;
+use App\Http\Controllers\GroupeController;
+use App\Http\Controllers\ClasseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,6 +33,9 @@ Route::post("newpasschange", [AuthController::class,"newpasschange"])->name("new
 Route::get('/get-villes/{departementId}', [DepartementController::class, 'getVilles']);
 Route::get('/get-arrondissements/{villeId}', [VilleController::class, 'getArrondissements']);
 Route::get('/get-circons/{villeId}', [CirconscriptionController::class, 'getCircons']);
+Route::get('/get-ecoles/{circonscriptionId}', [EcoleController::class, 'getEcoles']);
+Route::get('/get-groupes/{ecoleId}', [GroupeController::class, 'getGroupes']);
+Route::get('/get-classes/{groupeId}', [ClasseController::class, 'getClasses']);
 
 Route::middleware('auth')->group(function () {
     //route de base
@@ -44,4 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::get('profil/index/{userId}', [ProfilControleur::class, 'index'])->name('profil.index');
     Route::resource('user', UserController::class);
     Route::resource('circonscription', CirconscriptionController::class);
+    Route::resource('ecole', EcoleController::class);
+    Route::resource('groupe', GroupeController::class);
+    Route::resource('classe', ClasseController::class);
 });
