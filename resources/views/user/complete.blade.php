@@ -1,4 +1,4 @@
-<a href="{{ route('dash') }}"><i style="font-size:24px" class="fa">&#xf0a8;</i></a>
+<a href="{{ route('dash') }}">Retour</a>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -28,7 +28,7 @@
             </div>
         @endif
 
-        <form action="#" method="post">
+        <form action="{{ route('complete') }}" method="post">
             @csrf
             <h1>Complétez votre inscription</h1>
             <select name="ville" id="ville">
@@ -41,7 +41,8 @@
                 <option>circonscription</option>
             </select>
             <div id="AjouterC" style="display: none;">
-                <h3>Aucune circonscription n'est présente dans cette ville. Veuillez ajouter la vôtre</h3>
+                <h3 style="display: none;">Aucune circonscription n'est présente dans cette ville. Veuillez ajouter la
+                    vôtre</h3>
                 <button type="button" id="AjouterCB">Ajouter votre circonscription</button>
             </div>
             @if (session('user')['grade'] != 'cpins')
@@ -49,14 +50,16 @@
                     <option>ecole</option>
                 </select>
                 <div id="AjouterE" style="display: none;">
-                    <h3>Aucune école n'est présente dans cette circonscription. Veuillez ajouter la vôtre</h3>
+                    <h3 style="display: none;">Aucune école n'est présente dans cette circonscription. Veuillez ajouter
+                        la vôtre</h3>
                     <button type="button" id="AjouterEB">Ajouter votre école</button>
                 </div>
                 <select id="groupe" name="groupe" required value="{{ old('groupe') }}">
                     <option>groupe</option>
                 </select>
                 <div id="AjouterG" style="display: none;">
-                    <h3>Aucun groupe n'est présent dans cette école. Veuillez ajouter le vôtre</h3>
+                    <h3 style="display: none;">Aucun groupe n'est présent dans cette école. Veuillez ajouter le vôtre
+                    </h3>
                     <button type="button" id="AjouterGB">Ajouter votre groupe</button>
                 </div>
                 @if (session('user')['grade'] == 'instituteur')
@@ -64,12 +67,13 @@
                         <option>classe</option>
                     </select>
                     <div id="AjouterCl" style="display: none;">
-                        <h3>Aucune classe n'est présente dans ce groupe. Veuillez ajouter la vôtre</h3>
+                        <h3 style="display: none;">Aucune classe n'est présente dans ce groupe. Veuillez ajouter la
+                            vôtre</h3>
                         <button type="button" id="AjouterClB">Ajouter votre classe</button>
                     </div>
                 @endif
             @endif
-            <button type="submit">Compètez</button>
+            <button type="submit" name="complete">Compètez</button>
         </form>
     </div>
     <!--Modal pour ajouter une circonscription-->
@@ -172,14 +176,27 @@
                             if (userGrade === userGradeValue && addButtonId) {
                                 $(`#${addButtonId}`).show();
                                 $(`#${elementsToShowHide}`).hide();
+                                if (addButtonId === 'AjouterC' || addButtonId === 'AjouterE' ||
+                                    addButtonId === 'AjouterG' || addButtonId === 'AjouterCl') {
+                                    $(`#${addButtonId} h3`).show();
+                                }
                             } else if (addButtonId) {
                                 alert('Vous ne pouvez pas compléter votre inscription. Attendez que votre ' +
                                     dataKey + ' soit ajoutée');
                                 $(`#${elementsToShowHide}`).hide();
                             }
                         } else if (data && data[dataKey]) {
-                            if (addButtonId) $(`#${addButtonId}`).hide();
-                            if (elementsToShowHide) $(`#${elementsToShowHide}`).show();
+                            if ((addButtonId === 'AjouterC' && userGrade === 'cpins') ||
+                                (addButtonId === 'AjouterE' && userGrade === 'directeur') ||
+                                (addButtonId === 'AjouterG' && userGrade === 'directeur') ||
+                                (addButtonId === 'AjouterCl' && userGrade === 'instituteur')
+                            ) {
+                                $(`#${addButtonId}`).show();
+                                $(`#${addButtonId} h3`).hide();
+                            } else {
+                                if (addButtonId) $(`#${addButtonId}`).hide();
+                                if (elementsToShowHide) $(`#${elementsToShowHide}`).show();
+                            }
                             $.each(data[dataKey], function(key, value) {
                                 $(selectId).append('<option value="' + value.id + '">' + value
                                     .nom + '</option>');
@@ -199,7 +216,7 @@
             const modalC = document.getElementById('modalC');
             const modalE = document.getElementById('modalE');
             const modalG = document.getElementById('modalG');
-            const modalCl = document.getElementById('modalCl')
+            const modalCl = document.getElementById('modalCl');
             const role = document.getElementById('role');
             const infoChef = document.getElementById('infoChef');
             const buttonCB = document.getElementById('AjouterCB');

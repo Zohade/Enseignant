@@ -13,4 +13,7 @@ class Circonscription extends Model
         'ville_id',
         'user_id',
     ];
+     public function ecoles() {
+        return $this->hasMany(Ecole::class);
+    }
 }

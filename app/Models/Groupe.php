@@ -13,4 +13,11 @@ class Groupe extends Model
         'ecole_id',
         'user_id',
     ];
+    public function classes() {
+        return $this->hasMany(Classe::class);
+    }
+
+    public function ecole() {
+        return $this->belongsTo(Ecole::class);
+    }
 }

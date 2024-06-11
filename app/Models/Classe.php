@@ -14,5 +14,7 @@ class Classe extends Model
         'groupe_id',
         'user_id',
     ];
-
+     public function groupe() {
+        return $this->belongsTo(Groupe::class);
+    }
 }

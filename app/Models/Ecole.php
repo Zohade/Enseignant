@@ -12,4 +12,11 @@ class Ecole extends Model
         'nom',
         'circonscription_id',
     ];
+     public function groupes() {
+        return $this->hasMany(Groupe::class);
+    }
+
+    public function circonscription() {
+        return $this->belongsTo(Circonscription::class);
+    }
 }

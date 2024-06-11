@@ -50,4 +50,5 @@ Route::middleware('auth')->group(function () {
     Route::resource('ecole', EcoleController::class);
     Route::resource('groupe', GroupeController::class);
     Route::resource('classe', ClasseController::class);
+    Route::post('user/complete', [UserController::class, 'complete'])->name('complete');
 });

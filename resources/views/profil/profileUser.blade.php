@@ -6,6 +6,7 @@
     <title>Mon profil</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ asset('assets/css/profil.css') }}">
     <script src="{{ asset('assets/vendor/cropper/cropper.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('assets/vendor/cropper/cropper.css') }}">
@@ -39,7 +40,9 @@
                     <div class="profile-status">
                         <i class="fa fa-check-circle"></i> En ligne
                     </div>
-                    <span class="label label-danger">Completez votre inscription</span>
+                    @if (session('info') == null)
+                        <span class="label label-danger">Completez votre inscription</span>
+                    @endif
                     <img src="{{ $avatar }}" alt class="profile-img img-responsive center-block" id="ImageBase">
                     <!--bouton pour déclencher le form de modification photo-->
                     <button id="modifierPhoto" title="Modifier photo" style="border: none">
@@ -64,11 +67,13 @@
                             <li><i class="fa-li fa fa-tasks"></i>Tasks done: <span>1024</span></li>
                         </ul>
                     </div>
-                    <div class="profile-message-btn center-block text-center">
-                        <a href="{{ route('user.index') }}" class="btn btn-success">
-                            <i class="fa fa-envelope"></i> Completer votre inscription
-                        </a>
-                    </div>
+                    @if (session('info') == null)
+                        <div class="profile-message-btn center-block text-center">
+                            <a href="{{ route('user.index') }}" class="btn btn-success">
+                                <i class="fa fa-envelope"></i> Completer votre inscription
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </div>
             <div class="col-lg-9 col-md-8 col-sm-8">
@@ -94,8 +99,7 @@
                                     Adresse
                                 </div>
                                 <div class="profile-user-details-value">
-                                    10880 Malibu Point,
-                                    <br> Malibu, Calif., 90265
+                                    {{ $data['arrondissement']->name . ', ' . $data['ville']->name . ', ' . $data['departement']->name }}
                                 </div>
                             </div>
                             <div class="profile-user-details clearfix">
@@ -103,36 +107,48 @@
                                     Circonscription
                                 </div>
                                 <div class="profile-user-details-value">
-                                    10880 Malibu Point,
-                                    <br> Malibu, Calif., 90265
+                                    {{ $data['circonscription']->nom }}
                                 </div>
                             </div>
-                            <div class="profile-user-details clearfix">
-                                <div class="profile-user-details-label">
-                                    Ecole
+                            @if (session('user')['grade'] != 'cpins')
+                                <div class="profile-user-details clearfix">
+                                    <div class="profile-user-details-label">
+                                        Ecole
+                                    </div>
+                                    <div class="profile-user-details-value">
+                                        {{ $data['ecole']->nom }}
+                                    </div>
                                 </div>
-                                <div class="profile-user-details-value">
-                                    oh
+                                <div class="profile-user-details clearfix">
+                                    <div class="profile-user-details-label">
+                                        Groupe
+                                    </div>
+                                    <div class="profile-user-details-value">
+                                        {{ $data['groupe']->nom }}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="profile-user-details clearfix">
-                                <div class="profile-user-details-label">
-                                    Classe
-                                </div>
-                                <div class="profile-user-details-value">
-                                    ok
-                                </div>
-                            </div>
+                                @if (session('user')['grade'] == 'insituteur')
+                                    <div class="profile-user-details clearfix">
+                                        <div class="profile-user-details-label">
+                                            Classe
+                                        </div>
+                                        <div class="profile-user-details-value">
+                                            {{ $data['classe']->nom }}
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
                         </div>
                         <div class="col-sm-4 profile-social">
                             <ul class="fa-ul">
-                                <li><i class="fa-li fa fa-phone-square"></i><a
+                                <li><i class="fa-li fa fa-twitter-square"></i><a
                                         href="tel:+229{{ $user['phone_number'] }}">{{ $user['phone_number'] }}</a>
                                 </li>
                                 <li><i class="fa-li fa fa-whatsapp"></i><a
-                                        href="https://wa.me/{{ $user['phone_number'] }}">rendre public</a></li>
+                                        href="https://wa.me/{{ $user['phone_number'] }}">{{ $user['phone_number'] }}</a>
+                                </li>
                                 <li><i class="fa-li fa fa-envelope" aria-hidden="true"></i><a
-                                        href="mailto:{{ $user['email'] }}">rendre public</a></li>
+                                        href="mailto:{{ $user['email'] }}">{{ $user['email'] }}</a></li>
                             </ul>
                         </div>
                     </div>
@@ -140,171 +156,77 @@
                         <ul class="nav nav-tabs">
                             <li class="active"><a href="#tab-activity" data-toggle="tab">Vos publications</a></li>
                             <li><a href="#tab-friends" data-toggle="tab">Vos téléchargements</a></li>
-                            <li><a href="#tab-chat" data-toggle="tab">Chat</a></li>
+                            @if (session('user')['grade'] == 'directeur')
+                                <li><a href="#tab-chat" data-toggle="tab">Publication en attente de validation</a></li>
+                            @endif
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade in active" id="tab-activity">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <th>Type</th>
-                                            <th>Contenu</th>
-                                            <th>Statut</th>
-                                            <th>Date</th>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <i class="fa fa-book" aria-hidden="true" title="document"></i>
-                                                </td>
-                                                <td>
-                                                    John Doe changed order status from
-                                                </td>
-                                                <td>
-                                                    <span class="label label-primary">En attente</span>
-                                                </td>
-                                                <td>
-                                                    2014/08/08 12:08
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"
-                                                        title="post"></i>
-                                                </td>
-                                                <td>
-                                                    John Doe posted a comment in <a href="#">Lost in Translation
-                                                        opening scene</a> discussion.
-                                                </td>
-                                                <td>
-                                                    <span class="label label-success">Validé</span>
-                                                </td>
-                                                <td>
-                                                    2014/08/08 12:08
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <i class="fa fa-book" aria-hidden="true" title="document"></i>
-                                                </td>
-                                                <td>
-                                                    John Doe changed order status from
-                                                </td>
-                                                <td>
-                                                    <span class="label label-primary">En attente</span>
-                                                </td>
-                                                <td>
-                                                    2014/08/08 12:08
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"
-                                                        title="post"></i>
-                                                </td>
-                                                <td>
-                                                    John Doe posted a comment in <a href="#">Lost in Translation
-                                                        opening scene</a> discussion.
-                                                </td>
-                                                <td>
-                                                    <span class="label label-success">Validé</span>
-                                                </td>
-                                                <td>
-                                                    2014/08/08 12:08
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <i class="fa fa-book" aria-hidden="true" title="document"></i>
-                                                </td>
-                                                <td>
-                                                    John Doe changed order status from
-                                                </td>
-                                                <td>
-                                                    <span class="label label-primary">En attente</span>
-                                                </td>
-                                                <td>
-                                                    2014/08/08 12:08
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"
-                                                        title="post"></i>
-                                                </td>
-                                                <td>
-                                                    John Doe posted a comment in <a href="#">Lost in Translation
-                                                        opening scene</a> discussion.
-                                                </td>
-                                                <td>
-                                                    <span class="label label-success">Validé</span>
-                                                </td>
-                                                <td>
-                                                    2014/08/08 12:08
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <i class="fa fa-book" aria-hidden="true" title="document"></i>
-                                                </td>
-                                                <td>
-                                                    John Doe changed order status from
-                                                </td>
-                                                <td>
-                                                    <span class="label label-primary">En attente</span>
-                                                </td>
-                                                <td>
-                                                    2014/08/08 12:08
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"
-                                                        title="post"></i>
-                                                </td>
-                                                <td>
-                                                    John Doe posted a comment in <a href="#">Lost in Translation
-                                                        opening scene</a> discussion.
-                                                </td>
-                                                <td>
-                                                    <span class="label label-success">Validé</span>
-                                                </td>
-                                                <td>
-                                                    2014/08/08 12:08
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <i class="fa fa-book" aria-hidden="true" title="document"></i>
-                                                </td>
-                                                <td>
-                                                    John Doe changed order status from
-                                                </td>
-                                                <td>
-                                                    <span class="label label-primary">En attente</span>
-                                                </td>
-                                                <td>
-                                                    2014/08/08 12:08
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center">
-                                                    <i class="fa fa-pencil-square-o" aria-hidden="true"
-                                                        title="post"></i>
-                                                </td>
-                                                <td>
-                                                    John Doe posted a comment in <a href="#">Lost in Translation
-                                                        opening scene</a> discussion.
-                                                </td>
-                                                <td>
-                                                    <span class="label label-success">Validé</span>
-                                                </td>
-                                                <td>
-                                                    2014/08/08 12:08
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <!-- Ajout de la liste déroulante -->
+                                <div class="form-group">
+                                    <label for="publicationType">Sélectionnez le type de publication :</label>
+                                    <select class="form-control" id="publicationType">
+                                        <option value="posts">Posts</option>
+                                        <option value="documents">Documents</option>
+                                        <option value="formations">Formations</option>
+                                    </select>
+                                </div>
+
+                                <div id="postsContainer">
+                                    @foreach ($data['posts'] as $post)
+                                        <div class="post">
+                                            <div class="post-header d-flex justify-content-between align-items-center">
+                                                <div class="post-author">
+                                                    <img src="{{ $avatar }}" class="author-avatar">
+                                                    <div>
+                                                        <span class="author-name">{{ $user['name'] }}</span>
+                                                        <small>{{ $post->time_elapsed }}</small>
+                                                        <!-- Durée de la publication -->
+                                                    </div>
+                                                </div>
+                                                <div class="post-options dropdown">
+                                                    <button class="btn dropdown-toggle" type="button"
+                                                        id="dropdownMenuButton" data-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fa fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                        <li><a class="dropdown-item" href="#">Supprimer</a></li>
+                                                        <li><a class="dropdown-item" href="#">Partager</a></li>
+                                                        <li><a class="dropdown-item" href="#">Éditer</a></li>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p style="font-weight: bold;color:black">{{ $post->texte }}</p>
+                                            @if ($post->photo)
+                                                <img src="{{ asset('storage/' . $post->photo) }}" width="100%"
+                                                    class="post-image">
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+
+
+                                <div id="documentsContainer" style="display: none;">
+                                    <!-- Contenu pour les documents -->
+                                    @foreach ($data['documents'] as $document)
+                                        <div class="document">
+                                            <h4>{{ $document->title }}</h4>
+                                            <p>{{ $document->description }}</p>
+                                            <a href="{{ asset('storage/' . $document->file) }}"
+                                                download>Télécharger</a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div id="formationsContainer" style="display: none;">
+                                    <!-- Contenu pour les formations -->
+                                    @foreach ($data['formations'] as $formation)
+                                        <div class="formation">
+                                            <h4>{{ $formation->title }}</h4>
+                                            <p>{{ $formation->description }}</p>
+                                            {{-- <a href="{{ route('formations.show', $formation->id) }}">Voir Détails</a> --}}
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="tab-friends">
@@ -329,46 +251,6 @@
                                                     <span class="label label-default">Inactive</span>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>
-                                                    <a href="#" class="user-link">Ipsum</a>
-                                                </td>
-                                                <td>25</td>
-                                                <td>2012/05/06</td>
-                                                <td class="text-center">
-                                                    <span class="label label-default">Inactive</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <a href="#" class="user-link">Dolor</a>
-                                                </td>
-                                                <td>25</td>
-                                                <td>2012/05/06</td>
-                                                <td class="text-center">
-                                                    <span class="label label-default">Inactive</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <a href="#" class="user-link">Amet</a>
-                                                </td>
-                                                <td>25</td>
-                                                <td>2012/05/06</td>
-                                                <td class="text-center">
-                                                    <span class="label label-default">Inactive</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <a href="#" class="user-link">Sedit</a>
-                                                </td>
-                                                <td>25</td>
-                                                <td>2012/05/06</td>
-                                                <td class="text-center">
-                                                    <span class="label label-default">Inactive</span>
-                                                </td>
-                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -380,84 +262,6 @@
                                             style="position: relative; overflow: hidden; width: auto; height: 340px;">
                                             <div class="conversation-inner"
                                                 style="overflow: hidden; width: auto; height: 340px;">
-                                                <div class="conversation-item item-left clearfix">
-                                                    <div class="conversation-user">
-                                                        <img src="https://bootdey.com/img/Content/user_1.jpg"
-                                                            alt="Male">
-                                                    </div>
-                                                    <div class="conversation-body">
-                                                        <div class="name">John</div>
-                                                        <div class="time hidden-xs">21:00</div>
-                                                        <div class="text">
-                                                            Hello!
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="conversation-item item-right clearfix">
-                                                    <div class="conversation-user">
-                                                        <img src="https://bootdey.com/img/Content/user_2.jpg"
-                                                            alt="Female">
-                                                    </div>
-                                                    <div class="conversation-body">
-                                                        <div class="name">Alice</div>
-                                                        <div class="time hidden-xs">21:00</div>
-                                                        <div class="text">
-                                                            Hi, John
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="conversation-item item-right clearfix">
-                                                    <div class="conversation-user">
-                                                        <img src="https://bootdey.com/img/Content/user_2.jpg"
-                                                            alt="Female">
-                                                    </div>
-                                                    <div class="conversation-body">
-                                                        <div class="name">Alice</div>
-                                                        <div class="time hidden-xs">21:00</div>
-                                                        <div class="text">
-                                                            How are you?
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="conversation-item item-left clearfix">
-                                                    <div class="conversation-user">
-                                                        <img src="https://bootdey.com/img/Content/user_1.jpg"
-                                                            alt="Male">
-                                                    </div>
-                                                    <div class="conversation-body">
-                                                        <div class="name">John</div>
-                                                        <div class="time hidden-xs">21:00</div>
-                                                        <div class="text">
-                                                            I'm good. How are you?
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="conversation-item item-left clearfix">
-                                                    <div class="conversation-user">
-                                                        <img src="https://bootdey.com/img/Content/user_1.jpg"
-                                                            alt="Male">
-                                                    </div>
-                                                    <div class="conversation-body">
-                                                        <div class="name">John</div>
-                                                        <div class="time hidden-xs">21:00</div>
-                                                        <div class="text">
-                                                            I'm looking for a job.
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="conversation-item item-right clearfix">
-                                                    <div class="conversation-user">
-                                                        <img src="https://bootdey.com/img/Content/user_2.jpg"
-                                                            alt="Female">
-                                                    </div>
-                                                    <div class="conversation-body">
-                                                        <div class="name">Alice</div>
-                                                        <div class="time hidden-xs">21:00</div>
-                                                        <div class="text">
-                                                            Sorry to hear that.
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
                                             <div class="slimScrollBar"
                                                 style="background: rgb(232, 230, 230); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px;">
@@ -467,64 +271,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="conversation-new-message">
-                                        <form>
-                                            <div class="form-group">
-                                                <textarea class="form-control" placeholder="Enter message..." rows="2"></textarea>
-                                            </div>
-                                            <div class="clearfix">
-                                                <button type="submit" class="btn btn-success pull-right">Send
-                                                    message</button>
-                                            </div>
-                                        </form>
-                                    </div>
                                 </div>
-                            </div>
-                            <div class="tab-pane fade" id="tab-settings">
-                                <form class="form-horizontal">
-                                    <div class="form-group">
-                                        <label for="profileFirstName" class="col-sm-2 control-label">First
-                                            name</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="profileFirstName"
-                                                placeholder="First name">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="profileLastName" class="col-sm-2 control-label">Last name</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="profileLastName"
-                                                placeholder="Last name">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="profileEmail" class="col-sm-2 control-label">Email</label>
-                                        <div class="col-sm-10">
-                                            <input type="email" class="form-control" id="profileEmail"
-                                                placeholder="Email">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="profilePassword" class="col-sm-2 control-label">Password</label>
-                                        <div class="col-sm-10">
-                                            <input type="password" class="form-control" id="profilePassword"
-                                                placeholder="Password">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="profilePassword2" class="col-sm-2 control-label">Confirm
-                                            password</label>
-                                        <div class="col-sm-10">
-                                            <input type="password" class="form-control" id="profilePassword2"
-                                                placeholder="Password">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-10">
-                                            <button type="submit" class="btn btn-danger">Save</button>
-                                        </div>
-                                    </div>
-                                </form>
                             </div>
                         </div>
                     </div>
@@ -593,5 +340,26 @@
                     });
                 }
             });
+
+            // Event listener for the publication type selection
+            $('#publicationType').on('change', function() {
+                var selectedType = $(this).val();
+                if (selectedType === 'posts') {
+                    $('#postsContainer').show();
+                    $('#documentsContainer').hide();
+                    $('#formationsContainer').hide();
+                } else if (selectedType === 'documents') {
+                    $('#postsContainer').hide();
+                    $('#documentsContainer').show();
+                    $('#formationsContainer').hide();
+                } else if (selectedType === 'formations') {
+                    $('#postsContainer').hide();
+                    $('#documentsContainer').hide();
+                    $('#formationsContainer').show();
+                }
+            });
         });
     </script>
+</body>
+
+</html>

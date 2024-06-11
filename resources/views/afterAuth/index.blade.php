@@ -9,7 +9,6 @@
     <div class="main-content">
         <div class="create-post">
             <div class="profile-message-btn center-block text-center">
-
             </div>
             @if (session('info') == null)
                 <style>
@@ -80,8 +79,10 @@
                     </li>
                     <li><img src="{{ asset('assets/images/document.png') }}"> <button type="button" id="document"
                             style="border: none;background:none">Document</button></li>
-                    <li><img src="{{ asset('assets/images/event.png') }}"><button type="button" id="formation"
-                            style="border: none;background:none"> Formation à venir</button></li>
+                    @if (session('user')['grade'] == 'cpins')
+                        <li><img src="{{ asset('assets/images/event.png') }}"><button type="button" id="formation"
+                                style="border: none;background:none"> Formation à venir</button></li>
+                    @endif
                     <li><button type="submit" name="PostSoumission"
                             style="background:#045be6;border:none;color:#fff">Poster</button></li>
                     </form>
@@ -109,9 +110,6 @@
                 then you are ahead among your competitors.
             </p>
             <img src="{{ asset('assets/images/post-image-4.png') }}"width="100%">
-
-
-
             <div class="post-stats">
                 <div>
                     <img src="{{ asset('assets/images/thumbsup.png') }}">

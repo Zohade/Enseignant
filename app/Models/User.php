@@ -27,6 +27,10 @@ class User extends Authenticatable
         'photo',
     ];
 
+    public function circonscription() {
+        return $this->belongsTo(Circonscription::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

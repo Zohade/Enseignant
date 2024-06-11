@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('circonscriptions', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
-            $table->foreignId('user_id')->constrained()->noActionOnDelete()->cascadeOnUpdate();
+            $table->foreignId('user_id')->constrained()->cascadeOnUpdate();
             $table->foreignId('ville_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
