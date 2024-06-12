@@ -241,6 +241,5 @@ class PublicationController extends Controller
      */
     public function destroy(Publication $publication)
     {
-        //
     }
 }

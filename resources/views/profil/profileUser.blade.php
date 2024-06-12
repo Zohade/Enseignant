@@ -168,66 +168,120 @@
                                     <select class="form-control" id="publicationType">
                                         <option value="posts">Posts</option>
                                         <option value="documents">Documents</option>
-                                        <option value="formations">Formations</option>
+                                        @if ($user['grade'] == 'cpins')
+                                            <option value="formations">Formations</option>
+                                        @endif
                                     </select>
                                 </div>
 
                                 <div id="postsContainer">
-                                    @foreach ($data['posts'] as $post)
-                                        <div class="post">
-                                            <div class="post-header d-flex justify-content-between align-items-center">
-                                                <div class="post-author">
-                                                    <img src="{{ $avatar }}" class="author-avatar">
-                                                    <div>
-                                                        <span class="author-name">{{ $user['name'] }}</span>
-                                                        <small>{{ $post->time_elapsed }}</small>
-                                                        <!-- Durée de la publication -->
+                                    @if ($data['posts'] == null)
+                                        <p>Vous n'avez aucun post</p>
+                                    @else
+                                        @foreach ($data['posts'] as $post)
+                                            <div class="post">
+                                                <div
+                                                    class="post-header d-flex justify-content-between align-items-center">
+                                                    <div class="post-author">
+                                                        <img src="{{ $avatar }}" class="author-avatar">
+                                                        <div>
+                                                            <span class="author-name">{{ $user['name'] }}</span>
+                                                            <small>{{ $post->time_elapsed }}</small>
+                                                            <!-- Durée de la publication -->
+                                                        </div>
+                                                    </div>
+                                                    <div class="post-options dropdown">
+                                                        <button class="btn dropdown-toggle" type="button"
+                                                            id="dropdownMenuButton" data-toggle="dropdown"
+                                                            aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fa fa-ellipsis-h"></i>
+                                                        </button>
+                                                        @if ($user['grade'] == 'instituteur')
+                                                            @if ($post->statutPub == 'attente')
+                                                                <span class="label label-primary">En attente</span>
+                                                            @elseif($post->statutPub == 'valide')
+                                                                <span class="label label-success">On Hold</span>
+                                                            @elseif($post->statutPub == 'rejet')
+                                                                <span class="label label-danger">Rejetté</span>
+                                                            @endif
+                                                        @endif
+                                                        <div class="dropdown-menu"
+                                                            aria-labelledby="dropdownMenuButton">
+                                                            <li><a href="{{ route('post.destroy', ['post' => $post->id]) }}"
+                                                                    class="offset-1"
+                                                                    onclick="event.preventDefault(); if (confirm('Êtes-vous sûr de vouloir supprimer ce post ?')) document.getElementById('delete-form-{{ $post->id }}').submit();">
+                                                                    Supprimer </a> </li>
+                                                            <form id="delete-form-{{ $post->id }}"
+                                                                action="{{ route('post.destroy', ['post' => $post->id]) }}"
+                                                                method="POST" style="display: none;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                            </form>
+                                                            <li>
+                                                                <a href="#" class="dropdown-item"
+                                                                    onclick="event.preventDefault(); document.getElementById('edit-post-{{ $post->id }}').style.display='block';">
+                                                                    Modifier
+                                                                </a>
+                                                            </li>
+                                                            <li><a class="dropdown-item" href="#">Partager</a>
+                                                            </li>
+                                                        </div>
+                                                        <form id="edit-post-{{ $post->id }}"
+                                                            action="{{ route('post.update', ['post' => $post->id]) }}"
+                                                            method="POST" style="display: none;">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="form-group">
+                                                                <textarea class="form-control" name="texte" rows="2">{{ $post->texte }}</textarea>
+                                                            </div>
+                                                            <div class="clearfix">
+                                                                <input type="submit" name="PostSoumission"
+                                                                    class="btn btn-success pull-right"
+                                                                    value="Enregistrer">
+                                                            </div>
+                                                        </form>
                                                     </div>
                                                 </div>
-                                                <div class="post-options dropdown">
-                                                    <button class="btn dropdown-toggle" type="button"
-                                                        id="dropdownMenuButton" data-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false">
-                                                        <i class="fa fa-ellipsis-h"></i>
-                                                    </button>
-                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                        <li><a class="dropdown-item" href="#">Supprimer</a></li>
-                                                        <li><a class="dropdown-item" href="#">Partager</a></li>
-                                                        <li><a class="dropdown-item" href="#">Éditer</a></li>
-                                                    </div>
-                                                </div>
+                                                <p style="font-weight: bold;color:black">{{ $post->texte }}</p>
+                                                @if ($post->photo != 'null')
+                                                    <img src="{{ asset('storage/' . $post->photo) }}" width="100%"
+                                                        class="post-image">
+                                                @endif
                                             </div>
-                                            <p style="font-weight: bold;color:black">{{ $post->texte }}</p>
-                                            @if ($post->photo)
-                                                <img src="{{ asset('storage/' . $post->photo) }}" width="100%"
-                                                    class="post-image">
-                                            @endif
-                                        </div>
-                                    @endforeach
+                                        @endforeach
+                                    @endif
                                 </div>
 
 
                                 <div id="documentsContainer" style="display: none;">
-                                    <!-- Contenu pour les documents -->
-                                    @foreach ($data['documents'] as $document)
-                                        <div class="document">
-                                            <h4>{{ $document->title }}</h4>
-                                            <p>{{ $document->description }}</p>
-                                            <a href="{{ asset('storage/' . $document->file) }}"
-                                                download>Télécharger</a>
-                                        </div>
-                                    @endforeach
+                                    @if ($data['documents'] == null)
+                                        <p>Vous n'avez aucun document soumis</p>
+                                    @else
+                                        @foreach ($data['documents'] as $document)
+                                            <div class="document">
+                                                <h4>{{ $document->title }}</h4>
+                                                <p>{{ $document->description }}</p>
+                                                <a href="{{ asset('storage/' . $document->file) }}"
+                                                    download>Télécharger</a>
+                                            </div>
+                                        @endforeach
+                                    @endif
                                 </div>
-                                <div id="formationsContainer" style="display: none;">
-                                    <!-- Contenu pour les formations -->
-                                    @foreach ($data['formations'] as $formation)
-                                        <div class="formation">
-                                            <h4>{{ $formation->title }}</h4>
-                                            <p>{{ $formation->description }}</p>
-                                            {{-- <a href="{{ route('formations.show', $formation->id) }}">Voir Détails</a> --}}
-                                        </div>
-                                    @endforeach
-                                </div>
+                                @if ($user['grade'] == 'cpins')
+                                    <div id="formationsContainer" style="display: none;">
+                                        @if ($data['formations'] == null)
+                                            <p>Vous n'avez programmé aucune formation</p>
+                                        @else
+                                            @foreach ($data['formations'] as $formation)
+                                                <div class="formation">
+                                                    <h4>{{ $formation->title }}</h4>
+                                                    <p>{{ $formation->description }}</p>
+                                                    {{-- <a href="{{ route('formations.show', $formation->id) }}">Voir Détails</a> --}}
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                @endif
                             </div>
                             <div class="tab-pane fade" id="tab-friends">
                                 <div class="table-responsive">
@@ -288,7 +342,6 @@
             let cropper;
             var form = document.getElementById('form');
 
-            // Event listener for the "Modifier Photo" button
             $('#modifierPhoto').on('click', function() {
                 $('#photoInput').click();
             });
@@ -300,16 +353,14 @@
                 var url = $(this).attr('data-action');
                 if (file) {
                     $("#buttonOK").show();
-                    // Set the source of the image and initialize the cropper
                     $("#ImageBase").attr('src', window.URL.createObjectURL(file));
                     if (cropper) {
-                        cropper.destroy(); // Destroy the old cropper instance
+                        cropper.destroy();
                     }
                     cropper = new Cropper(image, {
                         aspectRatio: 4 / 3,
                     });
 
-                    // Event listener for the "OK" button
                     $("#buttonOK").off('click').on('click', function() {
                         cropper.getCroppedCanvas().toBlob(function(blob) {
                             var formData = new FormData(form);
@@ -341,7 +392,6 @@
                 }
             });
 
-            // Event listener for the publication type selection
             $('#publicationType').on('change', function() {
                 var selectedType = $(this).val();
                 if (selectedType === 'posts') {
@@ -360,6 +410,7 @@
             });
         });
     </script>
+
 </body>
 
 </html>

@@ -53,6 +53,7 @@ class ProfilControleur extends Controller
                     switch ($publication->postable_type) {
                         case 'App\Models\Post':
                             $publication->postable->time_elapsed = $timeElapsed;
+                            $publication->postable->statutPub = $publication->statutPub;
                             $posts[] = $publication->postable;
                             break;
                         case 'App\Models\Document':
