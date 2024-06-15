@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Models\Publication;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\PublicationRequest;
 
 class DocumentController extends Controller
 {
@@ -53,7 +55,17 @@ class DocumentController extends Controller
      */
     public function update(Request $request, Document $document)
     {
-        //
+        $doc = Document::where(['id' => $document->id])->update([
+            'titre' => $request->titre,
+            'desc' => $request->desc,
+            'prix' => $request->price,
+            'payant' => ($request->price > 0) ? 1 : 0,
+        ]);
+        if($doc){
+            return back()->with(["alert" => "Votre document a été mis à jour"]);
+        }else{
+            return back()->withErrors(['une erreur est survenue']);
+        }
     }
 
     /**
@@ -61,6 +73,14 @@ class DocumentController extends Controller
      */
     public function destroy(Document $document)
     {
-        //
+        $pub = Publication::where([
+            'postable_id' => $document->id,
+            'postable_type' => "App\Models\Document",
+        ])->delete();
+        if($pub){
+            return back()->with(['alert' => 'Votre document a été supprimé']);
+        }else{
+            return back()->with(['alert'=>'Une erreur s\'est produite']);
+        }
     }
 }

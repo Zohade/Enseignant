@@ -45,32 +45,32 @@ class ProfilControleur extends Controller
                 }
                 //posts de l'user
                 $publications = Publication::where(['user_id' => $user['id']])->orderBy('created_at','desc')->get();
-                $posts = [];
-                $documents = [];
-                $formations = [];
-                foreach ($publications as $publication) {
-                    $timeElapsed = $this->getTimeElapsed($publication->created_at);
-                    switch ($publication->postable_type) {
-                        case 'App\Models\Post':
-                            $publication->postable->time_elapsed = $timeElapsed;
-                            $publication->postable->statutPub = $publication->statutPub;
-                            $posts[] = $publication->postable;
-                            break;
-                        case 'App\Models\Document':
-                            $publication->postable->time_elapsed = $timeElapsed;
-                            $documents[] = $publication->postable;
-                            break;
-                        case 'App\Models\Formation':
-                            $publication->postable->time_elapsed = $timeElapsed;
-                            $formations[] = $publication->postable;
-                        break;
+                $valeurs = $this->ParsePubOnChildrenModele($publications);
+                //pour les pubs en attente
+                if($user['grade']=='directeur'){
+                    $req1 = Classe::where(['groupe_id' => session('info')['id']])->get();
+                $pubForValidates = [];
+                    foreach ($req1 as $key => $value) {
+                    $pubForValidates [] = Publication::where([
+                        'user_id' => $value->user_id,
+                        'statutPub' => "attente"
+                    ])->orderBy('created_at','desc')->get();
                     }
+                $taille=count($pubForValidates);
+                $pubsEnAttente = [];
+                for ($i = 0; $i < $taille;$i++){
+                    $pubsEnAttente []= $this->ParsePubOnChildrenModele($pubForValidates[$i]);
                 }
-            }
-                $data['posts']= $posts;
-                $data['documents'] = $documents;
-                $data['formations'] = $formations;
+                }
+
+                $data['EnAttente'] = $pubsEnAttente;
+                $data['posts']= $valeurs["posts"];
+                $data['documents'] = $valeurs['documents'];
+                $data['formations'] = $valeurs['formations'];
                 return view('profil.profileUser',compact('data'));
+            }else{
+            return to_route('dash');
+            }
     }
     public function store(PhotoRequest $request){
         try {
@@ -112,5 +112,33 @@ class ProfilControleur extends Controller
             } else {
                 return $created->format('Y-m-d H:i:s');
             }
+        }
+
+        private function ParsePubOnChildrenModele($publications){
+            $posts = [];
+            $documents = [];
+            $formations = [];
+            foreach ($publications as $publication) {
+                    $timeElapsed = $this->getTimeElapsed($publication->created_at);
+                    $publication->postable->time_elapsed = $timeElapsed;
+                    $publication->postable->statutPub = $publication->statutPub;
+                    $publication->postable->type = $publication->posatble_type;
+                    $publication->postable->auteur = User::select(['name','id'])->where(['id' => $publication->user_id])->first();
+                    switch ($publication->postable_type) {
+                        case 'App\Models\Post':
+                            $posts[] = $publication->postable;
+                            break;
+                        case 'App\Models\Document':
+                            $documents[] = $publication->postable;
+                            break;
+                        case 'App\Models\Formation':
+                            $formations[] = $publication->postable;
+                        break;
+                    }
+                }
+        $valeurs['posts'] = $posts;
+        $valeurs['documents'] = $documents;
+        $valeurs['formations'] = $formations;
+        return $valeurs;
         }
 }

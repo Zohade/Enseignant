@@ -48,6 +48,12 @@ class PublicationRequest extends FormRequest
                 'paid'=>'boolean',
                 'priceFor'=>'required_if:paid,true|nullable|numeric|min:0',
             ];
+        }elseif($this->has('DocumentEdit')){
+            return [
+                'priceDoc' => 'nullable|numeric|min:0',
+                'titre' => 'required|string',
+                'description' => 'required|string',
+            ];
         }
 
     }
@@ -94,6 +100,15 @@ class PublicationRequest extends FormRequest
                 'priceFor.required_if' => "Entrez le prix de la formation",
                 'priceFor.numeric' => "Le prix doit être un nombre",
                 'priceFor.min' => "Entrez un prix supérieur ou égal à 0",
+            ];
+        }elseif($this->has('DocumentEdit')){
+            return [
+                'titre.required' => "Entrez le titre du document",
+                'titre.string' => "Seuls les caractères sont pris en compte",
+                 'description.required' => "Donnez une description",
+                'description.string' => "La description doit être une chaîne de caractères",
+                'priceDoc.numeric' => "Le prix doit être un nombre",
+                'priceDoc.min' => "Entrez un prix supérieur ou égal à 0",
             ];
         }
     }

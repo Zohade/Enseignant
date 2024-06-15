@@ -6,45 +6,45 @@
     @php
         $avatar = Storage::url(session('user')['photo']);
     @endphp
+    <style>
+        .btn {
+            display: inline-block;
+            padding: 0.9rem 1.8rem;
+            font-size: 16px;
+            font-weight: 700;
+            color: black;
+            border: 3px solid rgb(252, 70, 100);
+            cursor: pointer;
+            position: relative;
+            background-color: transparent;
+            text-decoration: none;
+            overflow: hidden;
+            z-index: 1;
+            font-family: inherit;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(252, 70, 100);
+            transform: translateX(-100%);
+            transition: all 0.3s;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            transform: translateX(0);
+        }
+    </style>
     <div class="main-content">
         <div class="create-post">
             <div class="profile-message-btn center-block text-center">
             </div>
             @if (session('info') == null)
-                <style>
-                    .btn {
-                        display: inline-block;
-                        padding: 0.9rem 1.8rem;
-                        font-size: 16px;
-                        font-weight: 700;
-                        color: black;
-                        border: 3px solid rgb(252, 70, 100);
-                        cursor: pointer;
-                        position: relative;
-                        background-color: transparent;
-                        text-decoration: none;
-                        overflow: hidden;
-                        z-index: 1;
-                        font-family: inherit;
-                    }
-
-                    .btn::before {
-                        content: "";
-                        position: absolute;
-                        left: 0;
-                        top: 0;
-                        width: 100%;
-                        height: 100%;
-                        background-color: rgb(252, 70, 100);
-                        transform: translateX(-100%);
-                        transition: all .3s;
-                        z-index: -1;
-                    }
-
-                    .btn:hover::before {
-                        transform: translateX(0);
-                    }
-                </style>
                 <a class="btn" href="{{ route('user.index') }}">Complétez votre inscription</a> pour profiter de toutes les
                 fonctionnlités de
                 notre site
@@ -177,13 +177,17 @@
                             <label for="title">Titre :</label>
                             <input type="text" id="title" name="titre" required>
 
-                            <label for="file">Fichier :</label>
-                            <input type="file" id="file" name="document" required>
+                            <div class="upload-btn-wrapper">
+                                <button class="upload-btn">
+                                    <i class="fa fa-upload" aria-hidden="true"></i> Choisir un fichier
+                                </button>
+                                <input type="file" id="file" name="document" required style="display:none">
+                            </div>
                         </div>
 
                         <div id="common-fields">
                             <label for="description">Description :</label>
-                            <textarea id="description" name="description"></textarea>
+                            <textarea id="description" name="description" cols="25"></textarea>
 
                             <label for="class">Classe :</label>
                             <select name="classe" id="class">
@@ -210,7 +214,6 @@
                             <input type="checkbox" id="paid" name="paid">
                             <span class="slider round"></span>
                         </label>
-
                         <!-- Affiche le prix du document si le document est payant -->
                         <div id="priceDoc" style="display: none;">
                             <label for="prix">Prix du document</label>
@@ -287,6 +290,9 @@
     <script src="{{ asset('assets/vendor/jquery/repeat/lib.js') }}"></script>
     <script src="{{ asset('assets/vendor/jquery/repeat/repeater.js') }}"></script>
     <script>
+        document.querySelector('.upload-btn').addEventListener('click', function() {
+            document.querySelector('#file').click();
+        });
         document.addEventListener('DOMContentLoaded', () => {
             const docTypeSelect = document.getElementById('doc-type');
             const ficheFields = document.getElementById('fiche-fields');
@@ -347,17 +353,6 @@
                 }
             }
 
-            // Initialize repeater
-            $('#programmation-wrapper').repeater({
-                initEmpty: false,
-                isFirstItemUndeletable: true,
-                show: function() {
-                    $(this).slideDown();
-                },
-                hide: function(e) {
-                    $(this).slideUp(e);
-                }
-            });
         });
         // Photo treatment
         document.getElementById('photo').onchange = function(event) {

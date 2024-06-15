@@ -252,19 +252,123 @@
                                     @endif
                                 </div>
 
-
                                 <div id="documentsContainer" style="display: none;">
                                     @if ($data['documents'] == null)
                                         <p>Vous n'avez aucun document soumis</p>
                                     @else
-                                        @foreach ($data['documents'] as $document)
-                                            <div class="document">
-                                                <h4>{{ $document->title }}</h4>
-                                                <p>{{ $document->description }}</p>
-                                                <a href="{{ asset('storage/' . $document->file) }}"
-                                                    download>Télécharger</a>
+                                        <div class="document">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    @if (session('alert'))
+                                                        <div class="alert alert-warning">
+                                                            {{ session('alert') }}
+                                                        </div>
+                                                    @endif
+
+                                                    @if (session('success'))
+                                                        <div class="alert alert-success">
+                                                            {{ session('success') }}
+                                                        </div>
+                                                    @endif
+                                                    <thead>
+                                                        <tr>
+                                                            <th><span>Type</span></th>
+                                                            <th><span>Titre</span></th>
+                                                            <th><span>Prix</span></th>
+                                                            <th><span>Nombre de télechargement</span></th>
+                                                            <th><span>Date</span></th>
+                                                            @if ($user['grade'] == 'instituteur')
+                                                                <th><span>Status</span></th>
+                                                            @endif
+                                                            <th></th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($data['documents'] as $document)
+                                                            <tr>
+                                                                <td>{{ $document->type_doc }}</td>
+                                                                <td>
+                                                                    <a href="{{ Storage::url($document->fichier) }}"
+                                                                        class="user-link">{{ $document->titre }}</a>
+                                                                </td>
+                                                                <td>{{ $document->prix }} XOF</td>
+                                                                <td class="text-center">0</td>
+                                                                <td>{{ $document->time_elapsed }}</td>
+                                                                <td>
+                                                                    @if ($user['grade'] == 'instituteur')
+                                                                        @if ($document->statutPub == 'attente')
+                                                                            <span class="label label-primary">En
+                                                                                attente</span>
+                                                                        @elseif($document->statutPub == 'valide')
+                                                                            <span class="label label-success">On
+                                                                                Hold</span>
+                                                                        @elseif($document->statutPub == 'rejet')
+                                                                            <span
+                                                                                class="label label-danger">Rejetté</span>
+                                                                        @endif
+                                                                    @endif
+                                                                </td>
+                                                                <td>
+                                                                    <a href="{{ route('document.destroy', ['document' => $document->id]) }}"
+                                                                        class="offset-1"
+                                                                        onclick="event.preventDefault(); if (confirm('Êtes-vous sûr de vouloir supprimer ce document ?')) document.getElementById('delete-form-{{ $document->id }}').submit();">
+                                                                        <i class="fa fa-trash" aria-hidden="true"
+                                                                            title="Supprimer"></i></a>
+
+                                                                    <!--formulaire de suppression-->
+                                                                    <form id="delete-form-{{ $document->id }}"
+                                                                        action="{{ route('document.destroy', ['document' => $document->id]) }}"
+                                                                        method="POST" style="display: none;">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                    </form>
+                                                                </td>
+                                                                <td>
+                                                                    <a href="#" class="dropdown-item"
+                                                                        onclick="event.preventDefault(); document.getElementById('edit-document-{{ $document->id }}').style.display='block';">
+                                                                        <i class="fa fa-edit" title="Modifier"></i>
+                                                                    </a>
+                                                                    <form id="edit-document-{{ $document->id }}"
+                                                                        action="{{ route('document.update', ['document' => $document->id]) }}"
+                                                                        method="POST" style="display: none;">
+                                                                        @csrf
+                                                                        @method('PUT')
+                                                                        <div class="form-group">
+                                                                            <label for="">Titre :
+                                                                                <input type="text"
+                                                                                    class="form-control"
+                                                                                    name="titre"
+                                                                                    placeholder="{{ $document->titre }}"
+                                                                                    value="{{ $document->titre }}"></label>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label for="">Description
+                                                                                <textarea class="form-control" name="desc" rows="2">{{ $document->desc }}</textarea>
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label for="">Prix :
+                                                                                <input type="number"
+                                                                                    class="form-control"
+                                                                                    value="{{ $document->prix }}"
+                                                                                    placeholder="{{ $document->prix }}"
+                                                                                    name="price" min="0">
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="clearfix">
+                                                                            <input type="submit" name="DocumentEdit"
+                                                                                class="btn btn-success pull-right"
+                                                                                value="Enregistrer">
+                                                                        </div>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                        @endforeach
+                                        </div>
+                                    @endforeach
                                     @endif
                                 </div>
                                 @if ($user['grade'] == 'cpins')
@@ -312,17 +416,109 @@
                             <div class="tab-pane fade" id="tab-chat">
                                 <div class="conversation-wrapper">
                                     <div class="conversation-content">
-                                        <div class="slimScrollDiv"
-                                            style="position: relative; overflow: hidden; width: auto; height: 340px;">
-                                            <div class="conversation-inner"
-                                                style="overflow: hidden; width: auto; height: 340px;">
-                                            </div>
-                                            <div class="slimScrollBar"
-                                                style="background: rgb(232, 230, 230); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px;">
-                                            </div>
-                                            <div class="slimScrollRail"
-                                                style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;">
-                                            </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th><span>Type</span></th>
+                                                        <th><span>Auteur</span></th>
+                                                        <th><span>Titre</span></th>
+                                                        <th><span>Date</span></th>
+                                                        <th><span>...</span></th>
+                                                        <th><span>Etat</span></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($data['EnAttente'] as $key => $value)
+                                                        @foreach ($value as $key => $val)
+                                                            @foreach ($val as $key => $v)
+                                                                <tr>
+                                                                    <td>{{ $v->postable_type == 'App\Models\Post' ? 'Post' : 'Document' }}
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="{{ $v->auteur->id }}"
+                                                                            class="user-link">{{ $v->auteur->name }}</a>
+                                                                    </td>
+                                                                    <td>{{ $v->}}</td>
+                                                                    <td class="text-center">0</td>
+                                                                    <td>{{ $document->time_elapsed }}</td>
+                                                                    <td>
+                                                                        @if ($user['grade'] == 'instituteur')
+                                                                            @if ($document->statutPub == 'attente')
+                                                                                <span class="label label-primary">En
+                                                                                    attente</span>
+                                                                            @elseif($document->statutPub == 'valide')
+                                                                                <span class="label label-success">On
+                                                                                    Hold</span>
+                                                                            @elseif($document->statutPub == 'rejet')
+                                                                                <span
+                                                                                    class="label label-danger">Rejetté</span>
+                                                                            @endif
+                                                                        @endif
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="{{ route('document.destroy', ['document' => $document->id]) }}"
+                                                                            class="offset-1"
+                                                                            onclick="event.preventDefault(); if (confirm('Êtes-vous sûr de vouloir supprimer ce document ?')) document.getElementById('delete-form-{{ $document->id }}').submit();">
+                                                                            <i class="fa fa-trash" aria-hidden="true"
+                                                                                title="Supprimer"></i></a>
+
+                                                                        <!--formulaire de suppression-->
+                                                                        <form id="delete-form-{{ $document->id }}"
+                                                                            action="{{ route('document.destroy', ['document' => $document->id]) }}"
+                                                                            method="POST" style="display: none;">
+                                                                            @csrf
+                                                                            @method('DELETE')
+                                                                        </form>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="#" class="dropdown-item"
+                                                                            onclick="event.preventDefault(); document.getElementById('edit-document-{{ $document->id }}').style.display='block';">
+                                                                            <i class="fa fa-edit"
+                                                                                title="Modifier"></i>
+                                                                        </a>
+                                                                        <form id="edit-document-{{ $document->id }}"
+                                                                            action="{{ route('document.update', ['document' => $document->id]) }}"
+                                                                            method="POST" style="display: none;">
+                                                                            @csrf
+                                                                            @method('PUT')
+                                                                            <div class="form-group">
+                                                                                <label for="">Titre :
+                                                                                    <input type="text"
+                                                                                        class="form-control"
+                                                                                        name="titre"
+                                                                                        placeholder="{{ $document->titre }}"
+                                                                                        value="{{ $document->titre }}"></label>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label for="">Description
+                                                                                    <textarea class="form-control" name="desc" rows="2">{{ $document->desc }}</textarea>
+                                                                                </label>
+                                                                            </div>
+                                                                            <div class="form-group">
+                                                                                <label for="">Prix :
+                                                                                    <input type="number"
+                                                                                        class="form-control"
+                                                                                        value="{{ $document->prix }}"
+                                                                                        placeholder="{{ $document->prix }}"
+                                                                                        name="price" min="0">
+                                                                                </label>
+                                                                            </div>
+                                                                            <div class="clearfix">
+                                                                                <input type="submit"
+                                                                                    name="DocumentEdit"
+                                                                                    class="btn btn-success pull-right"
+                                                                                    value="Enregistrer">
+                                                                            </div>
+                                                                        </form>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @endforeach
+                                                    @endforeach
+
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>

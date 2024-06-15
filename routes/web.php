@@ -11,6 +11,7 @@ use App\Http\Controllers\CirconscriptionController;
 use App\Http\Controllers\EcoleController;
 use App\Http\Controllers\GroupeController;
 use App\Http\Controllers\ClasseController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,7 +45,10 @@ Route::middleware('auth')->group(function () {
 
     //Publication
     Route::resource('publication', PublicationController::class);
+    //Post
     Route::resource('post', PostController::class);
+    //Doocument
+    Route::resource('/document', DocumentController::class);
     Route::post('/profil', [ProfilControleur::class, 'store'])->name('profil.store');
     Route::get('profil/index/{userId}', [ProfilControleur::class, 'index'])->name('profil.index');
     Route::resource('user', UserController::class);
