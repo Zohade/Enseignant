@@ -57,4 +57,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('groupe', GroupeController::class);
     Route::resource('classe', ClasseController::class);
     Route::post('user/complete', [UserController::class, 'complete'])->name('complete');
+
+    Route::get('/get-post/{id}', [PostController::class, 'getPost']);
+    Route::get('/get-document/{id}', [DocumentController::class, 'getDocument']);
+    Route::post('/valide-post/{id}', [PostController::class, 'validePost']);
+    Route::post('/rejete-post/{id}', [PostController::class, 'rejetePost']);
+
 });

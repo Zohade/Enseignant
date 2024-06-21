@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ asset('assets/css/profil.css') }}">
     <script src="{{ asset('assets/vendor/cropper/cropper.js') }}"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/cropper/cropper.css') }}">
     <style>
         #photoPreview {
@@ -154,17 +155,20 @@
                     </div>
                     <div class="tabs-wrapper profile-tabs">
                         <ul class="nav nav-tabs">
-                            <li class="active"><a href="#tab-activity" data-toggle="tab">Vos publications</a></li>
+                            <li class="active"><a href="#tab-activity" data-toggle="tab">Vos
+                                    publications</a></li>
                             <li><a href="#tab-friends" data-toggle="tab">Vos téléchargements</a></li>
                             @if (session('user')['grade'] == 'directeur')
-                                <li><a href="#tab-chat" data-toggle="tab">Publication en attente de validation</a></li>
+                                <li><a href="#tab-chat" data-toggle="tab">Publication en attente de
+                                        validation</a></li>
                             @endif
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade in active" id="tab-activity">
                                 <!-- Ajout de la liste déroulante -->
                                 <div class="form-group">
-                                    <label for="publicationType">Sélectionnez le type de publication :</label>
+                                    <label for="publicationType">Sélectionnez le type de publication
+                                        :</label>
                                     <select class="form-control" id="publicationType">
                                         <option value="posts">Posts</option>
                                         <option value="documents">Documents</option>
@@ -198,9 +202,11 @@
                                                         </button>
                                                         @if ($user['grade'] == 'instituteur')
                                                             @if ($post->statutPub == 'attente')
-                                                                <span class="label label-primary">En attente</span>
+                                                                <span class="label label-primary">En
+                                                                    attente</span>
                                                             @elseif($post->statutPub == 'valide')
-                                                                <span class="label label-success">On Hold</span>
+                                                                <span class="label label-success">Validé
+                                                                </span>
                                                             @elseif($post->statutPub == 'rejet')
                                                                 <span class="label label-danger">Rejetté</span>
                                                             @endif
@@ -242,7 +248,8 @@
                                                         </form>
                                                     </div>
                                                 </div>
-                                                <p style="font-weight: bold;color:black">{{ $post->texte }}</p>
+                                                <p style="font-weight: bold;color:black">
+                                                    {{ $post->texte }}</p>
                                                 @if ($post->photo != 'null')
                                                     <img src="{{ asset('storage/' . $post->photo) }}" width="100%"
                                                         class="post-image">
@@ -301,8 +308,8 @@
                                                                             <span class="label label-primary">En
                                                                                 attente</span>
                                                                         @elseif($document->statutPub == 'valide')
-                                                                            <span class="label label-success">On
-                                                                                Hold</span>
+                                                                            <span class="label label-success">Validé
+                                                                            </span>
                                                                         @elseif($document->statutPub == 'rejet')
                                                                             <span
                                                                                 class="label label-danger">Rejetté</span>
@@ -413,124 +420,84 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="tab-chat">
-                                <div class="conversation-wrapper">
-                                    <div class="conversation-content">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th><span>Type</span></th>
-                                                        <th><span>Auteur</span></th>
-                                                        <th><span>Titre</span></th>
-                                                        <th><span>Date</span></th>
-                                                        <th><span>...</span></th>
-                                                        <th><span>Etat</span></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($data['EnAttente'] as $key => $value)
-                                                        @foreach ($value as $key => $val)
-                                                            @foreach ($val as $key => $v)
-                                                                <tr>
-                                                                    <td>{{ $v->postable_type == 'App\Models\Post' ? 'Post' : 'Document' }}
-                                                                    </td>
-                                                                    <td>
-                                                                        <a href="{{ $v->auteur->id }}"
-                                                                            class="user-link">{{ $v->auteur->name }}</a>
-                                                                    </td>
-                                                                    <td>{{ $v->}}</td>
-                                                                    <td class="text-center">0</td>
-                                                                    <td>{{ $document->time_elapsed }}</td>
-                                                                    <td>
-                                                                        @if ($user['grade'] == 'instituteur')
-                                                                            @if ($document->statutPub == 'attente')
+                            @if ($user['grade'] == 'directeur')
+                                <div class="tab-pane fade" id="tab-chat">
+                                    <div class="conversation-wrapper">
+                                        <div class="conversation-content">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    @if ($data['EnAttente'] == null)
+                                                        <p>Aucune publication en attente de validation</p>
+                                                    @else
+                                                        <thead>
+                                                            <tr>
+                                                                <th><span>Type</span></th>
+                                                                <th><span>Auteur</span></th>
+                                                                <th><span>Titre</span></th>
+                                                                <th><span>Date</span></th>
+                                                                <th><span>Etat</span></th>
+                                                                <th><span></span></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach ($data['EnAttente'] as $key => $value)
+                                                                @foreach ($value as $key => $val)
+                                                                    @foreach ($val as $key => $v)
+                                                                        <tr>
+                                                                            <td><i class="{{ $v->type == 'App\Models\Post' ? 'fa fa-pencil-square-o' : 'fa fa-book' }}"
+                                                                                    aria-hidden="true"
+                                                                                    title="{{ $v->type == 'App\Models\Post' ? 'post' : 'document' }}"></i>
+                                                                            </td>
+                                                                            <td>
+                                                                                <a href="{{ $v->auteur->id }}"
+                                                                                    class="user-link">{{ $v->auteur->name }}</a>
+                                                                            </td>
+                                                                            <td> <a href="">
+                                                                                    {{ $v->type == 'App\Models\Post' ? $v->texte : $v->titre }}</a>
+                                                                            </td>
+                                                                            <td>{{ $v->time_elapsed }}</td>
+                                                                            <td>
                                                                                 <span class="label label-primary">En
                                                                                     attente</span>
-                                                                            @elseif($document->statutPub == 'valide')
-                                                                                <span class="label label-success">On
-                                                                                    Hold</span>
-                                                                            @elseif($document->statutPub == 'rejet')
-                                                                                <span
-                                                                                    class="label label-danger">Rejetté</span>
-                                                                            @endif
-                                                                        @endif
-                                                                    </td>
-                                                                    <td>
-                                                                        <a href="{{ route('document.destroy', ['document' => $document->id]) }}"
-                                                                            class="offset-1"
-                                                                            onclick="event.preventDefault(); if (confirm('Êtes-vous sûr de vouloir supprimer ce document ?')) document.getElementById('delete-form-{{ $document->id }}').submit();">
-                                                                            <i class="fa fa-trash" aria-hidden="true"
-                                                                                title="Supprimer"></i></a>
-
-                                                                        <!--formulaire de suppression-->
-                                                                        <form id="delete-form-{{ $document->id }}"
-                                                                            action="{{ route('document.destroy', ['document' => $document->id]) }}"
-                                                                            method="POST" style="display: none;">
-                                                                            @csrf
-                                                                            @method('DELETE')
-                                                                        </form>
-                                                                    </td>
-                                                                    <td>
-                                                                        <a href="#" class="dropdown-item"
-                                                                            onclick="event.preventDefault(); document.getElementById('edit-document-{{ $document->id }}').style.display='block';">
-                                                                            <i class="fa fa-edit"
-                                                                                title="Modifier"></i>
-                                                                        </a>
-                                                                        <form id="edit-document-{{ $document->id }}"
-                                                                            action="{{ route('document.update', ['document' => $document->id]) }}"
-                                                                            method="POST" style="display: none;">
-                                                                            @csrf
-                                                                            @method('PUT')
-                                                                            <div class="form-group">
-                                                                                <label for="">Titre :
-                                                                                    <input type="text"
-                                                                                        class="form-control"
-                                                                                        name="titre"
-                                                                                        placeholder="{{ $document->titre }}"
-                                                                                        value="{{ $document->titre }}"></label>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <label for="">Description
-                                                                                    <textarea class="form-control" name="desc" rows="2">{{ $document->desc }}</textarea>
-                                                                                </label>
-                                                                            </div>
-                                                                            <div class="form-group">
-                                                                                <label for="">Prix :
-                                                                                    <input type="number"
-                                                                                        class="form-control"
-                                                                                        value="{{ $document->prix }}"
-                                                                                        placeholder="{{ $document->prix }}"
-                                                                                        name="price" min="0">
-                                                                                </label>
-                                                                            </div>
-                                                                            <div class="clearfix">
-                                                                                <input type="submit"
-                                                                                    name="DocumentEdit"
-                                                                                    class="btn btn-success pull-right"
-                                                                                    value="Enregistrer">
-                                                                            </div>
-                                                                        </form>
-                                                                    </td>
-                                                                </tr>
+                                                                            </td>
+                                                                            <td><button class="voirPlus"
+                                                                                    data-type="{{ $v->type }}"
+                                                                                    data-id="{{ $v->id }}"
+                                                                                    style="border: none"><i
+                                                                                        class="fa fa-plus-circle"
+                                                                                        aria-hidden="true"
+                                                                                        title="Voir plus"></i></button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                @endforeach
                                                             @endforeach
-                                                        @endforeach
-                                                    @endforeach
-
-                                                </tbody>
-                                            </table>
+                                                        </tbody>
+                                                    @endif
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-body">
+                <!-- Le contenu dynamique sera injecté ici -->
+            </div>
+            <div id="modal-footer">
+                <button id="valide" class="modal-btn">Validé</button>
+                <button id="rejete" class="modal-btn">Rejeté</button>
+            </div>
+        </div>
     </div>
-
     <script src="{{ asset('assets/vendor/jquery/jquery.min.js') }}"></script>
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
@@ -603,6 +570,154 @@
                     $('#documentsContainer').hide();
                     $('#formationsContainer').show();
                 }
+            });
+            $('.voirPlus').on('click', function() {
+                var type = $(this).data('type');
+                var id = $(this).data('id');
+                var url = '';
+
+                if (type == "App\\Models\\Post") {
+                    url = '/get-post/' + id;
+                } else if (type == "App\\Models\\Document") {
+                    url = '/get-document/' + id;
+                }
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        var modalBody = $('#modal-body');
+                        modalBody.empty();
+
+                        if (type == "App\\Models\\Post") {
+                            var postHtml = `
+                        <div class="post">
+                            <div class="post-author">
+                                <img src="/storage/${data.auteur.photo}" alt="auteur Photo" style="width:50px;height:50px;">
+                                <div>
+                                    <h1>${data.auteur.name}</h1>
+                                </div>
+                            </div>
+                            <p>${data.post.texte}</p>
+                            ${data.post.photo != 'null' ? `<img src="/storage/${data.post.photo}" width="100%">` : ''}
+                        </div>
+                    `;
+                            modalBody.append(postHtml);
+
+                            // Stocker l'ID du post dans le modal
+                            $('#modal').data('post-id', id).data('type', type);
+                        } else if (type == "App\\Models\\Document") {
+                            var documentHtml = `
+                    <div class="document">
+                        <div class="document-author">
+                            <img src="/storage/${data.auteur.photo}" alt="Auteur Photo" style="width:50px;height:50px;">
+                            <div>
+                                <h1>${data.auteur.name}</h1>
+                            </div>
+                            <div>${data.document.type}</div>
+                        </div>
+                        <div class="document-info">
+                            <h1>${data.document.titre}</h1>
+                            <p>Description: ${data.document.desc}</p>
+                            <p>Prix: ${data.document.prix}</p>
+                        </div>
+                        <div class="document-preview">
+                            <img src="/storage/${data.premierePage}" width="100%">
+                        </div>
+                    </div>
+                `;
+                            modalBody.append(documentHtml);
+                        }
+
+                        // Afficher la fenêtre modale
+                        var modal = $('#modal');
+                        modal.show();
+                    },
+                    error: function(resultat, statut, erreur) {
+                        alert(erreur);
+                    }
+                });
+            });
+
+            // Gestion de la fermeture de la fenêtre modale
+            $('.close').on('click', function() {
+                $('#modal').hide();
+            });
+
+            $(window).on('click', function(event) {
+                if ($(event.target).is('#modal')) {
+                    $('#modal').hide();
+                }
+            });
+
+            // Gestion des boutons Validé et Rejeté
+            $('#valide').on('click', function() {
+                var postId = $('#modal').data('post-id');
+                var type = $('#modal').data('type');
+
+                var formData = new FormData();
+
+                if (type == 'App\\Models\\Post') {
+                    formData.append('postId', postId);
+
+                    $.ajax({
+                        url: '/valide-post/' + postId,
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: formData,
+                        processData: false, // Important for sending FormData
+                        contentType: false, // Important for sending FormData
+                        dataType: 'JSON',
+                        success: function(data) {
+                            alert('Le post est validé');
+                            window.location.reload();
+                        },
+                        error: function(resultat, statut, erreur) {
+                            alert(erreur);
+                        }
+                    });
+                } else if (type == 'App\\Models\\Document') {
+                    // Ajouter la gestion des documents si nécessaire
+                    alert('Pas encore implémenté pour les documents');
+                }
+            });
+
+
+            $('#rejete').on('click', function() {
+                // Récupérer l'ID du post à partir du modal
+                var postId = $('#modal').data('post-id');
+                var type = $('#modal').data('type');
+                var formData = new FormData();
+
+                if (type == 'App\\Models\\Post') {
+                    formData.append('postId', postId);
+
+                    $.ajax({
+                        url: '/rejete-post/' + postId,
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: formData,
+                        processData: false, // Important for sending FormData
+                        contentType: false, // Important for sending FormData
+                        dataType: 'JSON',
+                        success: function(data) {
+                            alert('Le post a été rejeté');
+                            window.location.reload();
+                        },
+                        error: function(resultat, statut, erreur) {
+                            alert(erreur);
+                        }
+                    });
+                } else if (type == 'App\\Models\\Document') {
+                    // Ajouter la gestion des documents si nécessaire
+                    alert('Pas encore implémenté pour les documents');
+                }
+
             });
         });
     </script>

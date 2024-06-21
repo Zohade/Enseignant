@@ -54,7 +54,7 @@ class ProfilControleur extends Controller
                     $pubForValidates [] = Publication::where([
                         'user_id' => $value->user_id,
                         'statutPub' => "attente"
-                    ])->orderBy('created_at','desc')->get();
+                    ])->orderBy('created_at','asc')->get();
                     }
                 $taille=count($pubForValidates);
                 $pubsEnAttente = [];
@@ -63,7 +63,7 @@ class ProfilControleur extends Controller
                 }
                 }
 
-                $data['EnAttente'] = $pubsEnAttente;
+               if(session('user')['grade']=="directeur"){ $data['EnAttente'] = $pubsEnAttente;}
                 $data['posts']= $valeurs["posts"];
                 $data['documents'] = $valeurs['documents'];
                 $data['formations'] = $valeurs['formations'];
@@ -122,7 +122,7 @@ class ProfilControleur extends Controller
                     $timeElapsed = $this->getTimeElapsed($publication->created_at);
                     $publication->postable->time_elapsed = $timeElapsed;
                     $publication->postable->statutPub = $publication->statutPub;
-                    $publication->postable->type = $publication->posatble_type;
+                    $publication->postable->type = $publication->postable_type;
                     $publication->postable->auteur = User::select(['name','id'])->where(['id' => $publication->user_id])->first();
                     switch ($publication->postable_type) {
                         case 'App\Models\Post':

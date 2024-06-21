@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Publication;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PublicationRequest;
 use Illuminate\Http\Request;
@@ -76,4 +77,26 @@ class PostController extends Controller
             return back()->withErrors('Une erreur s\'est produite');
         }
     }
-}
+    public function getPost($id){
+        $post = Post::where(['id' => $id])->first();
+        $pub = Publication::where(['postable_type' => "App\Models\Post", 'postable_id' => $id])->first();
+        $auteur = User::select('name', 'id','photo')->where(['id' => $pub->user_id])->first();
+        return response()->json(['post'=> $post, "pub"=>$pub, 'auteur'=>$auteur]);
+    }
+    public function validePost($id){
+        $pub = Publication::where(["postable_type" => "App\Models\Post", "postable_id" => $id])->update(["statutPub" => "valide"]);
+        if($pub){
+            return response()->json("success");
+        }else{
+            return response()->json('error');
+        }
+    }
+    public function rejetePost($id){
+         $pub = Publication::where(["postable_type" => "App\Models\Post", "postable_id" => $id])->update(["statutPub" => "rejet"]);
+        if($pub){
+            return response()->json("success");
+        }else{
+            return response()->json('error');
+        }
+    }
+ }

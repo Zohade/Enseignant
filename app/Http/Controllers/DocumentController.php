@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Document;
 use App\Models\Publication;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\PublicationRequest;
@@ -83,4 +84,10 @@ class DocumentController extends Controller
             return back()->with(['alert'=>'Une erreur s\'est produite']);
         }
     }
+
+    public function getDocument($id){
+        $document = Document::where(['id' => $id])->first();
+        $pub = Publication::where(['postable_type' => "App\Models\Document", 'postable_id' => $id])->first();
+        $auteur = User::select('name', 'id','photo')->where(['id' => $pub->user_id])->first();
+        return response()->json(['document'=> $document,'auteur'=>$auteur]);    }
 }
