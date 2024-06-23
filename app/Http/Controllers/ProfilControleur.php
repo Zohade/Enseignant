@@ -13,6 +13,9 @@ use App\Models\Circonscription;
 use App\Models\Groupe;
 use App\Models\Ecole;
 use App\Models\Classe;
+use App\Models\DirigerCirc;
+use App\Models\DirigerGroupe;
+use App\Models\GarderClasse;
 use App\Models\Publication;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -24,6 +27,12 @@ class ProfilControleur extends Controller
     //
     public function index($userId){
             if($userId==session('user')['id']){
+                  $date = '';
+                    if (date('m') < '09') {
+                        $date = (date('Y') - 1) . '-' . date('Y');
+                    } else {
+                        $date = date('Y') . '-' . (date('Y') + 1);
+                    }
                 $data = [];
                 $user = session('user');
                 /*recupération de l'adresse de l'utilisateur*/
@@ -32,27 +41,48 @@ class ProfilControleur extends Controller
                 $data['departement'] = Departement::where(['id' => $data['ville']->departement_id])->first();
             //recupération des informations du grade
                 if ($user["grade"] == 'cpins') {
-                    $data['circonscription'] = Circonscription::where('user_id', $user["id"])->first();
+                    $circ= DirigerCirc::where(['user_id'=>$user["id"],"annee_scolaire"=>$date])->first();
+                    if($circ!=null)
+                        $data['circonscription'] = Circonscription::where('id', $circ->circonscription_id)->first();
+                    else
+                    $data['circonscription'] = null;
                 } elseif ($user["grade"] == 'directeur') {
-                    $data['groupe'] = Groupe::where(['user_id' => $user['id']])->first();
+                    //le groupe dirigé par le directeur
+                    $groupe= DirigerGroupe::where(['user_id'=>$user["id"],"annee_scolaire"=>$date])->first();
+                    if($groupe!=null){
+                    $data['groupe'] = Groupe::where('id',$groupe->groupe_id)->first();
                     $data['ecole'] = Ecole::where(['id' => $data['groupe']->ecole_id])->first();
                     $data['circonscription'] = Circonscription::where(['id' => $data['ecole']->circonscription_id])->first();
+                    }else{
+                        $data['groupe'] = null;
+                        $data['ecole'] = null;
+                        $data['circonscription'] = null;
+                    }
                 } elseif ($user["grade"] == 'instituteur') {
-                    $data['classe'] = Classe::where(['user_id' => $user['id']])->first();
+                    $classe=GarderClasse::where(['user_id'=>$user["id"],"annee_scolaire"=>$date])->first();
+                if ($classe != null) {
+                    $data['classe'] = Classe::where(['id' => $classe->classe_id])->first();
                     $data['groupe'] = Groupe::where(['id' => $data['classe']->groupe_id])->first();
                     $data['ecole'] = Ecole::where(['id' => $data['groupe']->ecole_id])->first();
                     $data['circonscription'] = Circonscription::where(['id' => $data['ecole']->circonscription_id])->first();
+                }else{
+                     $data['groupe'] = null;
+                     $data['ecole'] = null;
+                     $data['circonscription'] = null;
+                     $data['classe'] = null;
+                }
                 }
                 //posts de l'user
                 $publications = Publication::where(['user_id' => $user['id']])->orderBy('created_at','desc')->get();
                 $valeurs = $this->ParsePubOnChildrenModele($publications);
                 //pour les pubs en attente
-                if($user['grade']=='directeur'){
+                if($user['grade']=='directeur' && session('info')!=null){
                     $req1 = Classe::where(['groupe_id' => session('info')['id']])->get();
                 $pubForValidates = [];
-                    foreach ($req1 as $key => $value) {
+                    foreach ($req1 as $key => $classe) {
+                    $auteur = GarderClasse::where(['classe_id'=>$classe->id, 'annee_scolaire'=>$date])->first();
                     $pubForValidates [] = Publication::where([
-                        'user_id' => $value->user_id,
+                        'user_id' => $auteur->user_id,
                         'statutPub' => "attente"
                     ])->orderBy('created_at','asc')->get();
                     }
@@ -63,7 +93,11 @@ class ProfilControleur extends Controller
                 }
                 }
 
-               if(session('user')['grade']=="directeur"){ $data['EnAttente'] = $pubsEnAttente;}
+                if(session('user')['grade']=="directeur" && session('info')!=null) {
+                    $data['EnAttente'] = $pubsEnAttente;
+                } else {
+                    $data['EnAttente'] = null;
+                }
                 $data['posts']= $valeurs["posts"];
                 $data['documents'] = $valeurs['documents'];
                 $data['formations'] = $valeurs['formations'];

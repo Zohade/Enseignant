@@ -10,6 +10,7 @@
     "require": {
         "php": "^8.2",
         "clue/socket-raw": "^1.6",
+        "intervention/image": "^3.7",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
         "xenolope/quahog": "^3.0"

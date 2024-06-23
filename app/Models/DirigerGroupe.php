@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class DirigerGroupe extends Model
 {
     use HasFactory;
+    protected $fillable = ['user_id','groupe_id','annee_scolaire'];
 }

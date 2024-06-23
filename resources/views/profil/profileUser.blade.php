@@ -108,7 +108,7 @@
                                     Circonscription
                                 </div>
                                 <div class="profile-user-details-value">
-                                    {{ $data['circonscription']->nom }}
+                                    {{ $data['circonscription'] == null ? 'Non renseigné' : $data['circonscription']->nom }}
                                 </div>
                             </div>
                             @if (session('user')['grade'] != 'cpins')
@@ -117,7 +117,7 @@
                                         Ecole
                                     </div>
                                     <div class="profile-user-details-value">
-                                        {{ $data['ecole']->nom }}
+                                        {{ $data['ecole'] == null ? 'Non renseigné' : $data['ecole']->nom }}
                                     </div>
                                 </div>
                                 <div class="profile-user-details clearfix">
@@ -125,16 +125,16 @@
                                         Groupe
                                     </div>
                                     <div class="profile-user-details-value">
-                                        {{ $data['groupe']->nom }}
+                                        {{ $data['groupe'] == null ? 'Non renseigné' : $data['groupe']->nom }}
                                     </div>
                                 </div>
-                                @if (session('user')['grade'] == 'insituteur')
+                                @if (session('user')['grade'] == 'instituteur')
                                     <div class="profile-user-details clearfix">
                                         <div class="profile-user-details-label">
                                             Classe
                                         </div>
                                         <div class="profile-user-details-value">
-                                            {{ $data['classe']->nom }}
+                                            {{ $data['classe'] == null ? ' Non renseigné' : $data['classe']->nom }}
                                         </div>
                                     </div>
                                 @endif

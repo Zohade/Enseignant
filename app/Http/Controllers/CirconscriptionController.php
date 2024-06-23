@@ -6,6 +6,7 @@ use App\Models\Circonscription;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\CirconscriptionRequest;
+use App\Models\DirigerCirc;
 use App\Models\User;
 
 class CirconscriptionController extends Controller
@@ -31,30 +32,40 @@ class CirconscriptionController extends Controller
      */
     public function store(CirconscriptionRequest $request)
     {
+         $date = '';
+                    if (date('m') < '09') {
+                        $date = (date('Y') - 1) . '-' . date('Y');
+                    } else {
+                        $date = date('Y') . '-' . (date('Y') + 1);
+                    }
         try {
             if($request->role=='chef'){
                 $circonscription = Circonscription::create([
                     'ville_id'=>$request->ville,
-                    'user_id'=>session('user')['id'],
                     'nom'=>$request->nomC,
                 ]);
-                    return to_route('login')->with(['success' => 'Inscription complète. Connectez-vous pour prendre en compte les modifications']);
-            }elseif($request->role=='collaborateur'){
-                $user = User::where([
-                    'phone_number' => $request->numChef,
-                    'name' => $request->nomChef
-                ]);
-                if($user){
-                     $circonscription = Circonscription::create([
-                    'ville_id'=>$request->ville,
+                $dirige = DirigerCirc::create([
                     'user_id'=>session('user')['id'],
-                    'nom'=>$request->nomC,
+                    'circonscription_id'=>$circonscription->id,
+                    'annee_scolaire'=>$date,
                 ]);
-                    return to_route('login')->with(['success' => 'Inscription complète. Connectez-vous pour prendre en compte les modifications']);
-                }else{
-                    return back()->withErrors('Le chef de la circonscription n\'est pas inscrit sur le site');
-                }
-            }
+                return to_route('login')->with(['success' => 'Inscription complète. Connectez-vous pour prendre en compte les modifications']);
+             }//elseif($request->role=='collaborateur'){
+            //     $user = User::where([
+            //         'phone_number' => $request->numChef,
+            //         'name' => $request->nomChef
+            //     ]);
+            //     if($user){
+            //          $circonscription = Circonscription::create([
+            //         'ville_id'=>$request->ville,
+            //         'user_id'=>session('user')['id'],
+            //         'nom'=>$request->nomC,
+            //     ]);
+            //         return to_route('login')->with(['success' => 'Inscription complète. Connectez-vous pour prendre en compte les modifications']);
+            //     }else{
+            //         return back()->withErrors('Le chef de la circonscription n\'est pas inscrit sur le site');
+            //     }
+            // }
         } catch (\Throwable $th) {
             die('Une erreur s\'est produite ' . $th);
         }

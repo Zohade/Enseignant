@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('circonscription_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->integer('annee_scolaire')->unsigned();
+            $table->string('annee_scolaire');
             $table->timestamps();
         });
     }
