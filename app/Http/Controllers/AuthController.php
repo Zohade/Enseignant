@@ -16,6 +16,9 @@ use App\Models\Groupe;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\EnvoyerMail;
 use App\Models\Circonscription;
+use App\Models\DirigerCirc;
+use App\Models\DirigerGroupe;
+use App\Models\GarderClasse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
@@ -28,6 +31,12 @@ class AuthController extends Controller
     }
     public function loginPost(AuthRequest $request)
     {
+        $date = '';
+        if (date('m') < '09') {
+            $date = (date('Y') - 1) . '-' . date('Y');
+        } else {
+            $date = date('Y') . '-' . (date('Y') + 1);
+        }
         try {
             $credentials = [
                 'email'=>$request->Son_mail,
@@ -39,11 +48,11 @@ class AuthController extends Controller
                 if($user->statut==1){
 
                     if($user['grade']=='instituteur'){
-                        $info = Classe::where('user_id', $user->id)->first();
+                        $info = GarderClasse::where(['user_id'=> $user->id, "annee_scolaire"=>$date])->first();
                     }elseif($user['grade']=='directeur'){
-                        $info = Groupe::where('user_id',$user->id)->first();
+                        $info = DirigerGroupe::where(['user_id'=> $user->id, "annee_scolaire"=>$date])->first();
                     }elseif($user['grade']=='cpins'){
-                        $info = Circonscription::where('user_id',$user->id)->first();
+                        $info = DirigerCirc::where(['user_id'=> $user->id, "annee_scolaire"=>$date])->first();
                     }
                     $request->session()->regenerate();
                      session()->put(['user'=>$user,'info'=>$info]);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use App\Models\Ecole;
 use App\Models\Groupe;
+use App\Models\DirigerGroupe;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\EcoleRequest;
@@ -32,6 +33,12 @@ class EcoleController extends Controller
      */
     public function store(EcoleRequest $request)
     {
+         $date = '';
+                    if (date('m') < '09') {
+                        $date = (date('Y') - 1) . '-' . date('Y');
+                    } else {
+                        $date = date('Y') . '-' . (date('Y') + 1);
+                    }
         //
         try {
             DB::beginTransaction();
@@ -42,7 +49,11 @@ class EcoleController extends Controller
             $groupe = Groupe::create([
                 'nom'=>$request->groupe,
                 'ecole_id'=>$ecole->id,
+            ]);
+            $diriger=DirigerGroupe::create([
                 'user_id'=>session('user')['id'],
+                'groupe_id'=>$groupe->id,
+                'annee_scolaire'=>$date,
             ]);
                 DB::commit();
             return to_route('login')->with(['success' => 'Inscription complète. Connectez-vous pour prendre en compte les modifications']);

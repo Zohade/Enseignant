@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('nom');
             $table->foreignId('ecole_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('user_id')->constrained()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
