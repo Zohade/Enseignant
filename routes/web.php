@@ -62,5 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-document/{id}', [DocumentController::class, 'getDocument']);
     Route::post('/valide-post/{id}', [PostController::class, 'validePost']);
     Route::post('/rejete-post/{id}', [PostController::class, 'rejetePost']);
+    Route::post('/valide-document/{id}', [documentController::class, 'valideDocument']);
+    Route::post('/rejete-document/{id}', [DocumentController::class, 'rejeteDocument']);
 
 });

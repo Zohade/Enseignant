@@ -89,5 +89,23 @@ class DocumentController extends Controller
         $document = Document::where(['id' => $id])->first();
         $pub = Publication::where(['postable_type' => "App\Models\Document", 'postable_id' => $id])->first();
         $auteur = User::select('name', 'id','photo')->where(['id' => $pub->user_id])->first();
-        return response()->json(['document'=> $document,'auteur'=>$auteur]);    }
+        return response()->json(['document'=> $document,'auteur'=>$auteur]);
+    }
+
+    public function valideDocument($id){
+        $pub = Publication::where(["postable_type" => "App\Models\Document", "postable_id" => $id])->update(["statutPub" => "valide"]);
+        if($pub){
+            return response()->json("success");
+        }else{
+            return response()->json('error');
+        }
+    }
+    public function rejeteDocument($id){
+         $pub = Publication::where(["postable_type" => "App\Models\Document", "postable_id" => $id])->update(["statutPub" => "rejet"]);
+        if($pub){
+            return response()->json("success");
+        }else{
+            return response()->json('error');
+        }
+    }
 }

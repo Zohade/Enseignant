@@ -583,9 +583,6 @@
                 } else if (type == "App\\Models\\Document") {
                     url = '/get-document/' + id;
                 }
-                pdfjsLib.GlobalWorkerOptions.workerSrc =
-                    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
-
                 $.ajax({
                     url: url,
                     type: 'GET',
@@ -608,10 +605,11 @@
                                 </div>
                             `;
                             modalBody.append(postHtml);
-
-                            // Stocker l'ID du post dans le modal
                             $('#modal').data('post-id', id).data('type', type);
+                            $('#modal').show();
                         } else if (type == "App\\Models\\Document") {
+                            pdfjsLib.GlobalWorkerOptions.workerSrc =
+                                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
                             // Récupérez le chemin du fichier PDF (par exemple, '/storage/mon_fichier.pdf')
                             const pdfPath = '/storage/' + data.document.fichier;
 
@@ -647,22 +645,22 @@
 
                                     // Créez le contenu HTML pour le document après avoir généré l'image
                                     var documentHtml = `
-                                        <div class="document">
-                                            <div class="document-author">
-                                                <img src="/storage/${data.auteur.photo}" alt="Auteur Photo" style="width:50px;height:50px;">
-                                                <div>
-                                                    <h1>${data.auteur.name}</h1>
-                                                </div>
-                                                <div>${data.document.type_doc}</div>
+                                    <div class="document">
+                                        <div class="document-author">
+                                            <img src="/storage/${data.auteur.photo}" alt="Auteur Photo" style="width:50px;height:50px;">
+                                            <div>
+                                                <h1>${data.auteur.name}</h1>
                                             </div>
-                                            <div class="document-info">
-                                                <h1>${data.document.titre}</h1>
-                                                <p>Prix: ${data.document.prix} XOF</p>
-                                            </div>
-                                            <div class="document-preview"></div>
-                                            <p>Description: ${data.document.desc}</p>
+                                            <div>${data.document.type_doc}</div>
                                         </div>
-                                    `;
+                                        <div class="document-info">
+                                            <h1>${data.document.titre}</h1>
+                                            <p>Prix: ${data.document.prix} XOF</p>
+                                        </div>
+                                        <div class="document-preview"></div>
+                                        <p>Description: ${data.document.desc}</p>
+                                    </div>
+                                `;
                                     modalBody.append(documentHtml);
 
                                     // Ajoutez l'élément <img> à l'endroit souhaité dans votre page HTML
@@ -670,8 +668,10 @@
                                         .appendChild(imgElement);
 
                                     // Afficher la fenêtre modale
-                                    var modal = $('#modal');
-                                    modal.show();
+                                    $('#modal').data('post-id', id).data(
+                                        'type',
+                                        type);
+                                    $('#modal').show();
                                 });
                             }).catch(error => {
                                 console.error('Erreur lors de la conversion en image :',
@@ -685,15 +685,16 @@
                 });
 
                 // Gestion de la fermeture de la fenêtre modale
-                $('.close').on('click', function() {
+                $(document).off('click', '.close').on('click', '.close', function() {
                     $('#modal').hide();
                 });
 
-                $(window).on('click', function(event) {
+                $(window).off('click').on('click', function(event) {
                     if ($(event.target).is('#modal')) {
                         $('#modal').hide();
                     }
                 });
+
                 // Gestion des boutons Validé et Rejeté
                 $('#valide').on('click', function() {
                     var postId = $('#modal').data('post-id');
@@ -708,7 +709,8 @@
                             url: '/valide-post/' + postId,
                             type: 'POST',
                             headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                    'content')
                             },
                             data: formData,
                             processData: false, // Important for sending FormData
@@ -724,7 +726,28 @@
                         });
                     } else if (type == 'App\\Models\\Document') {
                         // Ajouter la gestion des documents si nécessaire
-                        alert('Pas encore implémenté pour les documents');
+                        var formData = new FormData();
+                        formData.append('postId', postId);
+
+                        $.ajax({
+                            url: '/valide-document/' + postId,
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                    'content')
+                            },
+                            data: formData,
+                            processData: false, // Important for sending FormData
+                            contentType: false, // Important for sending FormData
+                            dataType: 'JSON',
+                            success: function(data) {
+                                alert('Le document est validé');
+                                window.location.reload();
+                            },
+                            error: function(resultat, statut, erreur) {
+                                alert(erreur);
+                            }
+                        });
                     }
                 });
 
@@ -742,7 +765,8 @@
                             url: '/rejete-post/' + postId,
                             type: 'POST',
                             headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                    'content')
                             },
                             data: formData,
                             processData: false, // Important for sending FormData
@@ -758,7 +782,27 @@
                         });
                     } else if (type == 'App\\Models\\Document') {
                         // Ajouter la gestion des documents si nécessaire
-                        alert('Pas encore implémenté pour les documents');
+                        formData.append('postId', postId);
+
+                        $.ajax({
+                            url: '/rejete-document/' + postId,
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                    'content')
+                            },
+                            data: formData,
+                            processData: false, // Important for sending FormData
+                            contentType: false, // Important for sending FormData
+                            dataType: 'JSON',
+                            success: function(data) {
+                                alert('Le document a été rejeté');
+                                window.location.reload();
+                            },
+                            error: function(resultat, statut, erreur) {
+                                alert(erreur);
+                            }
+                        });
                     }
 
                 });

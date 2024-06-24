@@ -19,6 +19,8 @@ use App\Models\Circonscription;
 use App\Models\DirigerCirc;
 use App\Models\DirigerGroupe;
 use App\Models\GarderClasse;
+use App\Models\Publication;
+use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
@@ -53,6 +55,15 @@ class AuthController extends Controller
                         $info = DirigerGroupe::where(['user_id'=> $user->id, "annee_scolaire"=>$date])->first();
                     }elseif($user['grade']=='cpins'){
                         $info = DirigerCirc::where(['user_id'=> $user->id, "annee_scolaire"=>$date])->first();
+                    }
+                    $postables = Publication::where(['postable_type'=>'App\Models\Post', 'statutPub'=>'valide'])->get();
+                    $fils = [];
+                    dd($postables);
+                    foreach ($postables as $key => $postable) {
+                        $recup = Post::where(['id' => $postable->postable_id])->first();
+                        $author = User::select('name', 'id', 'photo')->where('id', $postable->user_id)->first();
+                        $recup->auteur = $author;
+                        dd($recup);
                     }
                     $request->session()->regenerate();
                      session()->put(['user'=>$user,'info'=>$info]);
