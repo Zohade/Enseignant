@@ -19,10 +19,7 @@ use App\Models\Circonscription;
 use App\Models\DirigerCirc;
 use App\Models\DirigerGroupe;
 use App\Models\GarderClasse;
-use App\Models\Publication;
-use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 
 
 class AuthController extends Controller
@@ -56,18 +53,9 @@ class AuthController extends Controller
                     }elseif($user['grade']=='cpins'){
                         $info = DirigerCirc::where(['user_id'=> $user->id, "annee_scolaire"=>$date])->first();
                     }
-                    $postables = Publication::where(['postable_type'=>'App\Models\Post', 'statutPub'=>'valide'])->get();
-                    $fils = [];
-                    dd($postables);
-                    foreach ($postables as $key => $postable) {
-                        $recup = Post::where(['id' => $postable->postable_id])->first();
-                        $author = User::select('name', 'id', 'photo')->where('id', $postable->user_id)->first();
-                        $recup->auteur = $author;
-                        dd($recup);
-                    }
                     $request->session()->regenerate();
                      session()->put(['user'=>$user,'info'=>$info]);
-                    return to_route('dash');
+                        return to_route('dash');
                 }else{
                     return to_route('login')->withErrors('Vérifiez votre adresse mail pour valider votre compte');
                 }
