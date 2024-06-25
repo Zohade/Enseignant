@@ -96,55 +96,57 @@
             <p>Sort by : <span>top <img src="{{ asset('assets/images/down-arrow.png') }}"></span> </p>
 
         </div>
-        <div class="post">
-            <div class="post-author">
-                <img src="{{ asset('assets/images/user-3.png') }}">
-                <div>
-                    <h1>Bejamin Leo</h1>
-                    <small>Founder and CEO at Giva | Angel Investor</small>
-                    <small>2 hours ago </small>
+        @foreach ($fils as $key => $post)
+            <div class="post">
+                <div class="post-author">
+                    <img src="/storage/{{ $post->auteur->photo }}">
+                    <div>
+                        <h1>{{ $post->auteur->name }}</h1>
+                        <small>Founder and CEO at Giva | Angel Investor</small>
+                        <small>{{ $post->time }}</small>
+                    </div>
                 </div>
-            </div>
-            <p>The sucess of every website depends on Search engine optimisation
-                and digital marketing strategy. If you are not in the first page of all major search engines
-                then you are ahead among your competitors.
-            </p>
-            <img src="{{ asset('assets/images/post-image-4.png') }}"width="100%">
-            <div class="post-stats">
-                <div>
-                    <img src="{{ asset('assets/images/thumbsup.png') }}">
-                    <img src="{{ asset('assets/images/love.png') }}">
-                    <img src="{{ asset('assets/images/clap.png') }}">
-                    <span class="liked-users">Adam Doe and 89 others</span>
+                <p>{{ $post->texte }}
+                </p>
+                @if ($post->photo != 'null')
+                    <img src="/storage/{{ $post->photo }}"width="100%">
+                @endif
+                <div class="post-stats">
+                    <div>
+                        <img src="{{ asset('assets/images/thumbsup.png') }}">
+                        <img src="{{ asset('assets/images/love.png') }}">
+                        <img src="{{ asset('assets/images/clap.png') }}">
+                        <span class="liked-users">Adam Doe and 89 others</span>
+                    </div>
+                    <div>
+                        <span>22 comments &middot; 40 shares</span>
+                    </div>
                 </div>
-                <div>
-                    <span>22 comments &middot; 40 shares</span>
-                </div>
-            </div>
-            <div class="post-activity">
-                <div>
-                    <img src="{{ asset('assets/images/user-1.png') }}" class="post-activity-user-icon">
-                    <img src="{{ asset('assets/images/down-arrow.png') }}" class="post-activity-arrow-icon">
+                <div class="post-activity">
+                    <div>
+                        <img src="{{ asset('assets/images/user-1.png') }}" class="post-activity-user-icon">
+                        <img src="{{ asset('assets/images/down-arrow.png') }}" class="post-activity-arrow-icon">
 
-                </div>
-                <div class="post-activity-link">
-                    <img src="{{ asset('assets/images/like.png') }}">
-                    <span>Like</span>
-                </div>
-                <div class="post-activity-link">
-                    <img src="{{ asset('assets/images/comment.png') }}">
-                    <span>Comment</span>
-                </div>
-                <div class="post-activity-link">
-                    <img src="{{ asset('assets/images/share.png') }}">
-                    <span>Share</span>
-                </div>
-                <div class="post-activity-link">
-                    <img src="{{ asset('assets/images/send.png') }}">
-                    <span>Send</span>
+                    </div>
+                    <div class="post-activity-link">
+                        <img src="{{ asset('assets/images/like.png') }}">
+                        <span>Like</span>
+                    </div>
+                    <div class="post-activity-link">
+                        <img src="{{ asset('assets/images/comment.png') }}">
+                        <span>Comment</span>
+                    </div>
+                    <div class="post-activity-link">
+                        <img src="{{ asset('assets/images/share.png') }}">
+                        <span>Share</span>
+                    </div>
+                    <div class="post-activity-link">
+                        <img src="{{ asset('assets/images/send.png') }}">
+                        <span>Send</span>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endforeach
     </div>
     <!-- Document Modal form-->
     <div class="body">

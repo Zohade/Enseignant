@@ -20,7 +20,6 @@ use App\Models\DirigerCirc;
 use App\Models\DirigerGroupe;
 use App\Models\GarderClasse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 
 
 class AuthController extends Controller
@@ -56,7 +55,7 @@ class AuthController extends Controller
                     }
                     $request->session()->regenerate();
                      session()->put(['user'=>$user,'info'=>$info]);
-                    return to_route('dash');
+                        return to_route('dash');
                 }else{
                     return to_route('login')->withErrors('Vérifiez votre adresse mail pour valider votre compte');
                 }

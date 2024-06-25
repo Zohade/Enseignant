@@ -11,10 +11,10 @@
         <ul>
             <li><a href="{{ route('dash') }}" class="active-link"><img src="{{ asset('assets/images/home.png') }}"
                         alt="home"> <span>Accueil</span></a></li>
-            <li><a href="#"><img src="{{ asset('assets/images/network.png') }}" alt="network"> <span>Mes
-                        amis</span></a></li>
-            <li><a href="#"><img src="{{ asset('assets/images/jobs.png') }}" alt="jobs">
-                    <span>Actualité</span></a></li>
+            <li><a href="#"><img src="{{ asset('assets/images/guide.jpeg') }}" alt="network">
+                    <span>Guides</span></a></li>
+            <li><a href="#"><img src="{{ asset('assets/images/fiche.jpeg') }}" alt="jobs">
+                    <span>Fiches</span></a></li>
             <li><a href="#"><img src="{{ asset('assets/images/message.png') }}" alt="message">
                     <span>Messages</span></a></li>
             <li><a href="#"><img src="{{ asset('assets/images/notification.png') }}" alt="notification">
