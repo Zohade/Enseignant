@@ -46,7 +46,7 @@
             </div>
             @if (session('info') == null)
                 <a class="btn" href="{{ route('user.index') }}">Complétez votre inscription</a> pour profiter de toutes les
-                fonctionnlités de
+                fonctionnalités de
                 notre site
             @else
                 <div class="create-post-input">
@@ -93,7 +93,7 @@
         </div>
         <div class="sort-by">
             <hr>
-            <p>Sort by : <span>top <img src="{{ asset('assets/images/down-arrow.png') }}"></span> </p>
+            <p><span><img src="{{ asset('assets/images/down-arrow.png') }}"></span> </p>
 
         </div>
         @foreach ($fils as $key => $post)

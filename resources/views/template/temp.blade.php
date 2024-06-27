@@ -17,7 +17,7 @@
     <div class="container">
         <div class="left-sidebar">
             <div class="sidebar-profile-box">
-                <img src="{{ asset('assets/images/cover-pic.png') }}" width="100%">
+                <img src="{{ asset('assets/images/teal.jpg') }}" width="100%">
                 <div class="sidebar-profile-info">
                     <a href="{{ route('profil.index', ['userId' => session('user')['id']]) }}">
                         <img src="{{ $avatar }}">
@@ -26,18 +26,20 @@
                     <h3>{{ session('user')['grade'] }}</h3>
 
                     <ul>
-                        <li>Profils vus <span>24</span></li>
-                        <li>Posts vus <span>128</span></li>
-                        <li>Nombre de connections<span>108</span></li>
+                        <li>Posts publiés<span>24</span></li>
+                        <li>Documents publiés <span>128</span></li>
+                        <li>Nombre de téléchargements<span>108</span></li>
                     </ul>
                 </div>
                 <div class="sidebar-profile-link">
-                    <a href="#"><img src="{{ asset('assets/images/items.png') }}">Mes publications</a>
-                    <a href="#"><img src="{{ asset('assets/images/premium.png') }}">Versions premium</a>
+                    <a href="{{ route('profil.index', ['userId' => session('user')['id']]) }}"><img
+                            src="{{ asset('assets/images/items.png') }}">Mes
+                        publications</a>
+                    {{-- <a href="#"><img src="{{ asset('assets/images/premium.png') }}">Versions premium</a> --}}
                 </div>
             </div>
 
-            <div class="sidebar-activity" id="sidebarActivity">
+            {{-- <div class="sidebar-activity" id="sidebarActivity">
                 <h3>RECENT</h3>
                 <a href="#"><img src="{{ asset('assets/images/recent.png') }}">Data Analysis</a>
                 <h3>GROUPS</h3>
@@ -45,50 +47,52 @@
                 <h3>HASHTAG</h3>
                 <a href="#"><img src="{{ asset('assets/images/hashtag.png') }}">dataanalyst</a>
                 <div class="discover-more-link">
-                    <a href="#">Discover More</a>
+                    <a href="#">Découvrir plus</a>
                 </div>
             </div>
-            <p id="showMoreLink" onclick="toggleActivity()">Show more <b>+</b></p>
+            <p id="showMoreLink" onclick="toggleActivity()">Voir plus<b>+</b></p> --}}
 
         </div>
         <div class="main-content">
             @yield('main')
         </div>
         <div class="right-sidebar">
-            <div class="sidebar-news">
-                <img src="{{ asset('assets/images/more.png') }}" class="info-icon">
+            <div class="sidebar-news ok">
                 <h3>Formations à venir</h3>
-                <a href="#">Inflation in Canada Affects the Workforce</a>
-                <span>2d ago &middot; 7,043 readers</span>
-                <a href="#" class="read-more-link">Read More</a>
             </div>
-
-            <div class="sidebar-ad">
-                <small>Ad &middot; &middot; &middot;</small>
-                <p>Master Web Development</p>
-                <div>
-                    <img src="{{ asset('assets/images/user-1.png') }}">
-                    <img src="{{ asset('assets/images/mi-logo.png') }}">
-
+            @foreach ($formationsAvenir as $key => $formationAvenir)
+                <div class="sidebar-news">
+                    <a href="#">{{ $formationAvenir->titre }}</a><br>
+                    <span>Début: {{ $formationAvenir->dateDebut }} &middot; 20 personnes intéressées</span>
+                    <a href="#" class="read-more-link">Voir plus </a>
                 </div>
-                <b>Brand and Demand in Xiaomi</b>
-                <a href="#" class="ad-link">Learn More</a>
-            </div>
+
+                <div class="sidebar-ad">
+                    <small>Formateur &middot; &middot; &middot;</small>
+                    <p>{{ $formationAvenir->formateur }}</p>
+                    <div>
+                        <img src="{{ asset('assets/images/ministere.png') }}">
+                        {{-- <img src="{{ asset('assets/images/mi-logo.png') }}"> --}}
+
+                    </div>
+                    <b>{{ $formationAvenir->desc }}</b>
+                </div>
+            @endforeach
 
 
             <div class="sidebar-useful-links">
-                <a href="#">About</a>
+                {{-- <a href="#">A propos</a>
                 <a href="#">Accessibility</a>
                 <a href="#">Help Center</a>
                 <a href="#">Privacy Policy</a>
                 <a href="#">Advertising</a>
                 <a href="#">Get the App</a>
-                <a href="#">More</a>
+                <a href="#">More</a> --}}
 
 
                 <div class="copyright-msg">
                     <img src="{{ asset('assets/images/logo.png') }}">
-                    <p>Linkedin &#169; 2022. All Rights Reserved</p>
+                    <p>Minsihoue &#169; 2024. Tous droits réservé</p>
                 </div>
             </div>
         </div>

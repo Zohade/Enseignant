@@ -7,7 +7,10 @@ use App\Models\Publication;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use DateTimeZone;
 use App\Http\Requests\PublicationRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class DocumentController extends Controller
 {
@@ -16,7 +19,16 @@ class DocumentController extends Controller
      */
     public function index()
     {
-        //
+        $publications = Publication::where(['postable_type'=>"App\Models\Document", "statutPub"=>"valide"])->get();
+        $documents = [];
+        foreach ($publications as $key => $pub) {
+            $doc = Document::where(['id' => $pub->postable_id])->first();
+            $doc->author = User::select(['name', 'id', 'photo'])->where(['id' => $pub->user_id])->first();
+            $doc->createAt = $this->getTimeElapsed($pub->created_at);
+            $documents[] = $doc;
+        }
+        $n=count($documents);
+        return view('document.index', compact('documents',"n"));
     }
 
     /**
@@ -41,6 +53,12 @@ class DocumentController extends Controller
     public function show(Document $document)
     {
         //
+       try {
+            $document = Document::findOrFail($document->id);
+            return view('document.preview', compact('document'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->back()->withErrors('Document not found.');
+        }
     }
 
     /**
@@ -108,4 +126,29 @@ class DocumentController extends Controller
             return response()->json('error');
         }
     }
+
+      private function getTimeElapsed($createdAt)
+        {
+            $created = Carbon::parse($createdAt, new DateTimeZone("Africa/Porto-Novo"));
+            $now = Carbon::now(new DateTimeZone("Africa/Porto-Novo"));
+
+            // Utilisation des méthodes diffIn*Correct pour éviter des valeurs négatives
+            $diffInSeconds = $now->diffInSeconds($created, false);
+            $diffInMinutes = $now->diffInMinutes($created, false);
+            $diffInHours = $now->diffInHours($created, false);
+            $diffInDays = $now->diffInDays($created, false);
+
+            if (abs($diffInSeconds) < 60) {
+                return  round(abs($diffInSeconds)) . "s";
+            } elseif (abs($diffInMinutes) < 60) {
+                return  round(abs($diffInMinutes)) . "m";
+            } elseif (abs($diffInHours) < 24) {
+                return  round(abs($diffInHours)) . "h";
+            } elseif (abs($diffInDays) <= 6) {
+                return  round(abs($diffInDays)) . "j";
+            } else {
+                return $created->format('Y-m-d H:i:s');
+            }
+        }
+
 }

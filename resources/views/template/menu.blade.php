@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ asset('assets/css/style_dash.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
 <nav class="navbar">
     <div class="navbar-left">
         <a href="index.html" class="logo"><img src="{{ asset('assets/images/logo.png') }}" alt="logo"></a>
@@ -9,17 +9,21 @@
     </div>
     <div class="navbar-center">
         <ul>
-            <li><a href="{{ route('dash') }}" class="active-link"><img src="{{ asset('assets/images/home.png') }}"
-                        alt="home"> <span>Accueil</span></a></li>
-            <li><a href="#"><img src="{{ asset('assets/images/guide.jpeg') }}" alt="network">
-                    <span>Guides</span></a></li>
-            <li><a href="#"><img src="{{ asset('assets/images/fiche.jpeg') }}" alt="jobs">
-                    <span>Fiches</span></a></li>
-            <li><a href="#"><img src="{{ asset('assets/images/message.png') }}" alt="message">
+            <li><a href="{{ route('dash') }}" class="{{ request()->routeIs('dash') ? 'active-link' : '' }}">
+                    <img src="{{ asset('assets/images/home.png') }}" alt="home">
+                    <span>Accueil</span></a></li>
+            <li><a href="{{ route('document.index') }}"
+                    class="{{ request()->routeIs('document.index') ? 'active-link' : '' }}">
+                    <img src="{{ asset('assets/images/guide.png') }}" alt="network">
+                    <span>Documents</span></a></li>
+            <li><a href="#" class="{{ request()->routeIs('messages') ? 'active-link' : '' }}">
+                    <img src="{{ asset('assets/images/message.png') }}" alt="message">
                     <span>Messages</span></a></li>
-            <li><a href="#"><img src="{{ asset('assets/images/notification.png') }}" alt="notification">
+            <li><a href="#" class="{{ request()->routeIs('notifications') ? 'active-link' : '' }}">
+                    <img src="{{ asset('assets/images/notification.png') }}" alt="notification">
                     <span>Notifications</span></a></li>
         </ul>
+
     </div>
     <div class="navbar-right">
         <div class="online">
