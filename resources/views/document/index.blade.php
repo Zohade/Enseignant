@@ -169,7 +169,8 @@
                                                                     </div>
                                                                 </td>
                                                                 <td>
-                                                                    <button class="bouton">
+                                                                    <a href="{{ route('document.download', $document->id) }}"
+                                                                        class="bouton">
                                                                         <svg class="svgIcon" viewBox="0 0 384 512"
                                                                             height="1em"
                                                                             xmlns="http://www.w3.org/2000/svg">
@@ -179,7 +180,7 @@
                                                                         </svg>
                                                                         <span class="icon2"></span>
                                                                         <span class="tooltip">Télécharger</span>
-                                                                    </button>
+                                                                    </a>
                                                                 </td>
                                                                 <td>
                                                                     <div class="widget-26-job-starred">

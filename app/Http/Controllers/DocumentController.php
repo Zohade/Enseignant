@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use DateTimeZone;
 use App\Http\Requests\PublicationRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Response;
+use App\Models\Telechargement;
 
 class DocumentController extends Controller
 {
@@ -126,7 +128,22 @@ class DocumentController extends Controller
             return response()->json('error');
         }
     }
-
+    public function download($id){
+        $document = Document::where(['id'=>$id])->first();
+        if($document->prix==0){
+            try {
+                $telecharge = Telechargement::create(["user_id"=>session('user')['id'],"document_id"=>$document->id]);
+                if ($telecharge) {
+                    $path = public_path("storage/{$document->fichier}");
+                    return response()->download($path);
+                }
+            } catch (\Throwable $th) {
+                die('Une erreur s\'est produite');
+            }
+        }else{
+            echo 'hello';
+        }
+    }
       private function getTimeElapsed($createdAt)
         {
             $created = Carbon::parse($createdAt, new DateTimeZone("Africa/Porto-Novo"));

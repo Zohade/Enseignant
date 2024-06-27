@@ -42,7 +42,7 @@ Route::get('/get-classes/{groupeId}', [ClasseController::class, 'getClasses']);
 Route::middleware('auth')->group(function () {
     //route de base
     Route::get('/index', [AcceuilControlleur::class, 'index'])->name('dash');
-
+    Route::get('/document/download/{id}', [DocumentController::class, 'download'])->name('document.download');
     //Publication
     Route::resource('publication', PublicationController::class);
     //Post
