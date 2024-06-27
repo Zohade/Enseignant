@@ -9,6 +9,7 @@ use App\Models\Post;
 use App\Models\User;
 use Carbon\Carbon;
 use DateTimeZone;
+use App\Models\Formation;
 
 class AcceuilControlleur extends Controller
 {
@@ -24,7 +25,9 @@ class AcceuilControlleur extends Controller
                         $recup->time = $timeElapsed;
                         $fils[] = $recup;
                     }
-        return view('afterAuth.index', compact('fils'));
+        $now = Carbon::now();
+        $formationsAvenir = Formation::where('dateDebut', '>', $now)->orderBy('dateDebut','Asc')->get();
+        return view('afterAuth.index', compact('fils','formationsAvenir'));
     }
 
     private function getTimeElapsed($createdAt)
