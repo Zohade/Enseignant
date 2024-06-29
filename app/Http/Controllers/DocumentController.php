@@ -141,7 +141,21 @@ class DocumentController extends Controller
                 die('Une erreur s\'est produite');
             }
         }else{
-            echo 'hello';
+            return view('document.paiement',compact('document'));
+        }
+    }
+    public function afterPaiement(Request $request){
+        if($request['transaction-status']=="approved"){
+             try {
+                $telecharge = Telechargement::create(["user_id"=>session('user')['id'],"document_id"=>$request->docID]);
+                $document = Document::where(['id'=>$request->docID])->first();
+                if ($telecharge) {
+                    $path = public_path("storage/{$document->fichier}");
+                    return response()->download($path);
+                }
+            } catch (\Throwable $th) {
+                die('Une erreur s\'est produite');
+            }
         }
     }
       private function getTimeElapsed($createdAt)

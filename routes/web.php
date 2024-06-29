@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     //route de base
     Route::get('/index', [AcceuilControlleur::class, 'index'])->name('dash');
     Route::get('/document/download/{id}', [DocumentController::class, 'download'])->name('document.download');
+    Route::post('/document/paiement', [DocumentController::class, 'afterPaiement'])->name('document.afterPaiement');
     //Publication
     Route::resource('publication', PublicationController::class);
     //Post
