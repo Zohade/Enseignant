@@ -125,6 +125,25 @@
                                             <div class="table-responsive">
                                                 <table class="table widget-26">
                                                     <tbody>
+                                                        @if (session('success'))
+                                                            <div class="alert alert-success">
+                                                                {{ session('success') }}
+                                                            </div>
+                                                        @endif
+                                                        @if (session('success'))
+                                                            <div class="alert alert-success">
+                                                                {{ session('success') }}
+                                                            </div>
+                                                        @endif
+                                                        @if ($errors->has('texte') || $errors->has('photo'))
+                                                            <div class="alert alert-danger">
+                                                                <ul>
+                                                                    @foreach ($errors->all() as $error)
+                                                                        <li>{{ $error }}</li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            </div>
+                                                        @endif
                                                         @foreach ($documents as $key => $document)
                                                             <tr>
                                                                 <td>
@@ -169,7 +188,8 @@
                                                                     </div>
                                                                 </td>
                                                                 <td>
-                                                                    <button class="bouton">
+                                                                    <a href="{{ route('document.download', $document->id) }}"
+                                                                        class="bouton">
                                                                         <svg class="svgIcon" viewBox="0 0 384 512"
                                                                             height="1em"
                                                                             xmlns="http://www.w3.org/2000/svg">
@@ -179,7 +199,7 @@
                                                                         </svg>
                                                                         <span class="icon2"></span>
                                                                         <span class="tooltip">Télécharger</span>
-                                                                    </button>
+                                                                    </a>
                                                                 </td>
                                                                 <td>
                                                                     <div class="widget-26-job-starred">

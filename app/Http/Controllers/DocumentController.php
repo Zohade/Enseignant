@@ -11,6 +11,9 @@ use Carbon\Carbon;
 use DateTimeZone;
 use App\Http\Requests\PublicationRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Response;
+use App\Models\Telechargement;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
 {
@@ -126,6 +129,43 @@ class DocumentController extends Controller
             return response()->json('error');
         }
     }
+    public function download($id){
+        $document = Document::where(['id'=>$id])->first();
+        if($document->prix==0){
+            try {
+                $telecharge = Telechargement::create(["user_id"=>session('user')['id'],"document_id"=>$document->id]);
+                if ($telecharge) {
+                    $path = public_path("storage/{$document->fichier}");
+                    return response()->download($path);
+                }
+            } catch (\Throwable $th) {
+                die('Une erreur s\'est produite');
+            }
+        }else{
+            return view('document.paiement',compact('document'));
+        }
+    }
+    public function afterPaiement(Request $request)
+{
+    if ($request['transaction-status'] == "approved") {
+        try {
+            $doc = intval($request->docId);
+            $document = Document::where(['id' => $doc])->first();
+            $telecharge = Telechargement::create(['user_id' => session('user')['id'], 'document_id' => $doc]);
+            if ($telecharge) {
+                session()->flash('success', 'Paiement réussi. Téléchargement en cours...');
+                 $path = public_path("storage/{$document->fichier}");
+                    return response()->download($path);
+            }
+        } catch (\Throwable $th) {
+            return back()->withErrors('Une erreur s\'est produite');
+        }
+    } else {
+        return to_route('document.index')->withErrors("Le paiement n'a pas réussi. Veuillez réessayer. S'il s'agit d'une erreur, veuillez contacter notre service d'aide");
+    }
+}
+
+
 
       private function getTimeElapsed($createdAt)
         {
