@@ -13,6 +13,7 @@ use App\Http\Requests\PublicationRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Response;
 use App\Models\Telechargement;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
 {
@@ -144,20 +145,28 @@ class DocumentController extends Controller
             return view('document.paiement',compact('document'));
         }
     }
-    public function afterPaiement(Request $request){
-        if($request['transaction-status']=="approved"){
-             try {
-                $telecharge = Telechargement::create(["user_id"=>session('user')['id'],"document_id"=>$request->docID]);
-                $document = Document::where(['id'=>$request->docID])->first();
-                if ($telecharge) {
-                    $path = public_path("storage/{$document->fichier}");
+    public function afterPaiement(Request $request)
+{
+    if ($request['transaction-status'] == "approved") {
+        try {
+            $doc = intval($request->docId);
+            $document = Document::where(['id' => $doc])->first();
+            $telecharge = Telechargement::create(['user_id' => session('user')['id'], 'document_id' => $doc]);
+            if ($telecharge) {
+                session()->flash('success', 'Paiement réussi. Téléchargement en cours...');
+                 $path = public_path("storage/{$document->fichier}");
                     return response()->download($path);
-                }
-            } catch (\Throwable $th) {
-                die('Une erreur s\'est produite');
             }
+        } catch (\Throwable $th) {
+            return back()->withErrors('Une erreur s\'est produite');
         }
+    } else {
+        return to_route('document.index')->withErrors("Le paiement n'a pas réussi. Veuillez réessayer. S'il s'agit d'une erreur, veuillez contacter notre service d'aide");
     }
+}
+
+
+
       private function getTimeElapsed($createdAt)
         {
             $created = Carbon::parse($createdAt, new DateTimeZone("Africa/Porto-Novo"));

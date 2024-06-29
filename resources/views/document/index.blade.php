@@ -125,6 +125,25 @@
                                             <div class="table-responsive">
                                                 <table class="table widget-26">
                                                     <tbody>
+                                                        @if (session('success'))
+                                                            <div class="alert alert-success">
+                                                                {{ session('success') }}
+                                                            </div>
+                                                        @endif
+                                                        @if (session('success'))
+                                                            <div class="alert alert-success">
+                                                                {{ session('success') }}
+                                                            </div>
+                                                        @endif
+                                                        @if ($errors->has('texte') || $errors->has('photo'))
+                                                            <div class="alert alert-danger">
+                                                                <ul>
+                                                                    @foreach ($errors->all() as $error)
+                                                                        <li>{{ $error }}</li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            </div>
+                                                        @endif
                                                         @foreach ($documents as $key => $document)
                                                             <tr>
                                                                 <td>

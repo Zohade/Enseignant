@@ -11,10 +11,15 @@
 
 
 <body>
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
     <form action="{{ route('document.afterPaiement') }}" method="POST" lass="card">
         @csrf
         <input type="hidden" name="docId" value="{{ $document->id }}">
-        <script src="https://checkout.fedapay.com/js/checkout.js" data-public-key="pk_live_lVd5w9Ls7FnH7I5eAVKi76oz"
+        <script src="https://checkout.fedapay.com/js/checkout.js" data-public-key="pk_sandbox_oDILAzktemGVvakIH5siOI5j"
             data-button-text="Payer {{ $document->prix }} XOF" data-button-class="button-class"
             data-transaction-amount="{{ $document->prix }}"
             data-transaction-description="Paiement pour l'achat de votre document sur Minsihoue" data-currency-iso="XOF"
