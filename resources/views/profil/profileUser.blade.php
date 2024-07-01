@@ -61,13 +61,25 @@
                     <button id="buttonOK" style="display: none">Continuez</button>
                     <img id="photoPreview" src="#" alt="Prévisualisation de la photo">
                     <div class="profile-label">
-                        <span class="label label-danger">{{ $user['grade'] }}</span>
+                        <span class="label label-danger">
+                            @if ($user['grade'] == 'cpins')
+                                Conseiller pédagogique
+                            @elseif($user['grade'] == 'directeur')
+                                Directeur
+                            @else
+                                Instituteur
+                            @endif
+                        </span>
                     </div>
                     <div class="profile-details">
                         <ul class="fa-ul">
-                            <li><i class="fa-li fa fa-truck"></i>Orders: <span>456</span></li>
-                            <li><i class="fa-li fa fa-comment"></i>Posts: <span>828</span></li>
-                            <li><i class="fa-li fa fa-tasks"></i>Tasks done: <span>1024</span></li>
+                            <li><i class="fa-li fa fa-comment"></i>Posts publiés: <span>456</span></li>
+                            <li><i class="fa-li fa fa-book"></i>Documents publiés: <span>828</span></li>
+                            @if (session('user')['grade'] == 'cpins')
+                                <li><i class="fa-li fa fa-graduation-cap"></i>Formations publiées: <span>1024</span>
+                                </li>
+                            @endif
+                            <li><i class="fa-li fa fa-download"></i>Vos téléchargements: <span>1024</span></li>
                         </ul>
                     </div>
                     @if (session('info') == null)

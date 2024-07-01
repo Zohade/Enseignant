@@ -84,7 +84,7 @@
                                 style="border: none;background:none"> Formation à venir</button></li>
                     @endif
                     <li><button type="submit" name="PostSoumission"
-                            style="background:#045be6;border:none;color:#fff">Poster</button></li>
+                            style="background:teal;border:none;color:#fff">Poster</button></li>
                     </form>
 
                 </div>
@@ -102,7 +102,15 @@
                     <img src="/storage/{{ $post->auteur->photo }}">
                     <div>
                         <h1>{{ $post->auteur->name }}</h1>
-                        <small>Founder and CEO at Giva | Angel Investor</small>
+                        <small>
+                            @if ($post->auteur->grade == 'instituteur')
+                                Instituteur
+                            @elseif ($post->auteur->grade == 'cpins')
+                                Conseiller pédagogique
+                            @else
+                                Directeur
+                            @endif
+                        </small>
                         <small>{{ $post->time }}</small>
                     </div>
                 </div>
@@ -111,40 +119,6 @@
                 @if ($post->photo != 'null')
                     <img src="/storage/{{ $post->photo }}"width="100%">
                 @endif
-                <div class="post-stats">
-                    <div>
-                        <img src="{{ asset('assets/images/thumbsup.png') }}">
-                        <img src="{{ asset('assets/images/love.png') }}">
-                        <img src="{{ asset('assets/images/clap.png') }}">
-                        <span class="liked-users">Adam Doe and 89 others</span>
-                    </div>
-                    <div>
-                        <span>22 comments &middot; 40 shares</span>
-                    </div>
-                </div>
-                <div class="post-activity">
-                    <div>
-                        <img src="{{ asset('assets/images/user-1.png') }}" class="post-activity-user-icon">
-                        <img src="{{ asset('assets/images/down-arrow.png') }}" class="post-activity-arrow-icon">
-
-                    </div>
-                    <div class="post-activity-link">
-                        <img src="{{ asset('assets/images/like.png') }}">
-                        <span>Like</span>
-                    </div>
-                    <div class="post-activity-link">
-                        <img src="{{ asset('assets/images/comment.png') }}">
-                        <span>Comment</span>
-                    </div>
-                    <div class="post-activity-link">
-                        <img src="{{ asset('assets/images/share.png') }}">
-                        <span>Share</span>
-                    </div>
-                    <div class="post-activity-link">
-                        <img src="{{ asset('assets/images/send.png') }}">
-                        <span>Send</span>
-                    </div>
-                </div>
             </div>
         @endforeach
     </div>

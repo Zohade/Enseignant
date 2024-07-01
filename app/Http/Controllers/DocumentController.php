@@ -165,6 +165,39 @@ class DocumentController extends Controller
     }
 }
 
+public function search(Request $request)
+{
+    $query = Document::query();
+    if ($request->has('search') && $request->search != '') {
+        $query->where('titre', 'like', '%' . $request->search . '%');
+    }
+
+    if ($request->has('type') && $request->type != '') {
+        $query->where('type_doc', $request->type);
+    }
+
+    if ($request->has('sort')) {
+        switch ($request->sort) {
+            case 'downloads':
+                $query->withCount('telechargements')->orderBy('document_id', 'desc');
+                break;
+            case 'class':
+                $query->orderBy('class');
+                break;
+            case 'newest':
+                $query->orderBy('created_at', 'desc');
+                break;
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+        }
+    }
+
+    $documents = $query->get();
+
+    return view('document.documents_table', compact('documents'))->render();
+}
+
 
 
       private function getTimeElapsed($createdAt)
