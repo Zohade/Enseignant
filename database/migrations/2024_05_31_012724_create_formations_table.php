@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('formateur');
             $table->string('desc');
             $table->date('dateDebut');
-            $table->date('dateFin');
+            $table->date('dateFin')->nullable();
             $table->boolean('payant');
             $table->integer('prix');
             $table->timestamps();

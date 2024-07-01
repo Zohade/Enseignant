@@ -11,7 +11,9 @@
 
 <body>
     <div class="container">
-        <h2>Inscription</h2>
+        <h2>
+            <div class="logo"></div>Inscription
+        </h2>
         <p>Inscrivez-vous pour profiter pleinement de votre plateforme</p>
         @if (session('success'))
             <div class="alert alert-success">
@@ -79,6 +81,13 @@
                 <button type="submit" class="form-btn">S'inscrire</button>
             </div>
         </form>
+        <p class="sign-up-label">
+            Vous avez déjà un compte ?
+            <a class="sign-up-link" href="{{ route('login') }}">
+                Connectez-vous
+            </a>
+            </form>
+        </p>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>

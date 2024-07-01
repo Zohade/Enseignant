@@ -17,9 +17,21 @@ body {
 }
 
 h2 {
+    display: flex;
+    align-items: center; /* Aligner verticalement le logo et le texte */
+    justify-content: center; /* Centrer le contenu */
+    gap: 10px; /* Espacement entre le texte et le logo */
     margin-bottom: 10px;
+    font-family: "Montserrat", sans-serif; /* Police Montserrat */
+    font-size: 24px; /* Taille du texte */
+    color: black; /* Couleur du texte */
 }
 
+.logo {
+    width: 100px; /* Taille du logo */
+    height: 100px; /* Taille du logo */
+    background: url("../images/logo.png") no-repeat center center/contain; /* Remplacez par l'URL de votre logo */
+}
 hr {
     margin: 10px 0;
     border: none;
@@ -76,12 +88,30 @@ hr {
 .strong {
     color: green;
 }
-.textPass{
+.textPass {
     font-style: italic;
     font-size: 0.8em;
     background-color: blanchedalmond;
 }
- html {
-     -webkit-text-size-adjust: 100%;
-     text-size-adjust: 100%;
- }
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+.sign-up-label {
+    font-size: 14px;
+    color: #747474;
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+    margin-left: 50px;
+}
+.sign-up-link {
+    margin-left: 1px;
+    font-size: 11px;
+    text-decoration: underline;
+    text-decoration-color: teal;
+    color: teal;
+    cursor: pointer;
+    font-weight: 800;
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+        "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}

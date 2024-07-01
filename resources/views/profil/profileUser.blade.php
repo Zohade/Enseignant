@@ -61,7 +61,15 @@
                     <button id="buttonOK" style="display: none">Continuez</button>
                     <img id="photoPreview" src="#" alt="Prévisualisation de la photo">
                     <div class="profile-label">
-                        <span class="label label-danger">{{ $user['grade'] }}</span>
+                        <span class="label label-danger">
+                            @if ($user['grade'] == 'cpins')
+                                Conseiller pédagogique
+                            @elseif($user['grade'] == 'directeur')
+                                Directeur
+                            @else
+                                Instituteur
+                            @endif
+                        </span>
                     </div>
                     <div class="profile-details">
                         <ul class="fa-ul">

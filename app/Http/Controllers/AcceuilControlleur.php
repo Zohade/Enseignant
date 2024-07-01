@@ -20,7 +20,7 @@ class AcceuilControlleur extends Controller
                     foreach ($publications as $key => $postable) {
                         $timeElapsed = $this->getTimeElapsed($postable->created_at);
                         $recup = Post::where(['id' => $postable->postable_id])->first();
-                        $author = User::select('name', 'id', 'photo')->where('id', $postable->user_id)->first();
+                        $author = User::select('name', 'id', 'photo', 'grade')->where('id', $postable->user_id)->first();
                         $recup->auteur = $author;
                         $recup->time = $timeElapsed;
                         $fils[] = $recup;
