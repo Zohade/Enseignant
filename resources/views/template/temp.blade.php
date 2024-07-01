@@ -23,7 +23,15 @@
                         <img src="{{ $avatar }}">
                         <h1>{{ session('user')['name'] }}</h1>
                     </a>
-                    <h3>{{ session('user')['grade'] }}</h3>
+                    <h3>
+                        @if (session('user')['grade'] == 'cpins')
+                            Conseiller pédagogique
+                        @elseif(session('user')['grade'] == 'instituteur')
+                            Instituteur
+                        @else
+                            Directeur
+                        @endif
+                    </h3>
 
                     <ul>
                         <li>Posts publiés<span>24</span></li>

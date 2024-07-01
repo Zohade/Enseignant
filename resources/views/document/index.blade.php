@@ -18,20 +18,20 @@
                 <div class="col-lg-12 card-margin">
                     <div class="card search-form">
                         <div class="card-body p-0">
-                            <form id="search-form">
+                            <form id="search-form" method="GET" action="{{ route('document.search') }}">
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="row no-gutters">
                                             <div class="col-lg-3 col-md-3 col-sm-12 p-0">
-                                                <select class="form-control" id="exampleFormControlSelect1">
-                                                    <option>Type</option>
-                                                    <option>Guides</option>
-                                                    <option>Fiches</option>
+                                                <select class="form-control" id="document-type" name="type">
+                                                    <option value="">Type</option>
+                                                    <option value="guide">Guides</option>
+                                                    <option value="fiche">Fiches</option>
                                                 </select>
                                             </div>
                                             <div class="col-lg-8 col-md-6 col-sm-12 p-0">
                                                 <input type="text" placeholder="Rechercher..." class="form-control"
-                                                    id="search" name="search">
+                                                    id="search-query" name="search">
                                             </div>
                                             <div class="col-lg-1 col-md-3 col-sm-12 p-0">
                                                 <button type="submit" class="btn btn-base">
@@ -41,8 +41,7 @@
                                                         stroke-linejoin="round" class="feather feather-search">
                                                         <circle cx="11" cy="11" r="8"></circle>
                                                         <line x1="21" y1="21" x2="16.65"
-                                                            y2="16.65">
-                                                        </line>
+                                                            y2="16.65"></line>
                                                     </svg>
                                                 </button>
                                             </div>
@@ -50,6 +49,7 @@
                                     </div>
                                 </div>
                             </form>
+
                         </div>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                                                     <div class="result-actions">
                                                         <div class="result-sorting">
                                                             <span>Trier par:</span>
-                                                            <select class="form-control border-0" id="exampleOption">
+                                                            <select class="form-control border-0" id="sort-by">
                                                                 <option value="1">Plus téléchargés</option>
                                                                 <option value="2">Par classe</option>
                                                                 <option value="3">Plus récents</option>
@@ -94,10 +94,10 @@
                                                                         y2="18"></line>
                                                                     <line x1="3" y1="6" x2="3"
                                                                         y2="6"></line>
-                                                                    <line x1="3" y1="12" x2="3"
-                                                                        y2="12"></line>
-                                                                    <line x1="3" y1="18" x2="3"
-                                                                        y2="18"></line>
+                                                                    <line x1="3" y1="12"
+                                                                        x2="3" y2="12"></line>
+                                                                    <line x1="3" y1="18"
+                                                                        x2="3" y2="18"></line>
                                                                 </svg>
                                                             </button>
                                                             <button type="button" class="btn btn-soft-base btn-icon">
@@ -273,7 +273,48 @@
         </div>
         <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
-        <script type="text/javascript"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const searchInput = document.getElementById("search-query");
+                const typeSelect = document.getElementById("document-type");
+                const sortSelect = document.getElementById("sort-by");
+
+                function fetchDocuments() {
+                    const query = searchInput.value;
+                    const type = typeSelect.value;
+                    const sortBy = sortSelect.value;
+
+                    $.ajax({
+                        url: '{{ route('document.search') }}',
+                        type: 'GET',
+                        data: {
+                            search: query,
+                            type: type,
+                            sort: sortBy
+                        },
+                        success: function(response) {
+                            // Mettre à jour la liste des documents
+                            const tableBody = document.querySelector(".table tbody");
+                            tableBody.innerHTML = response;
+
+                            // Vérifier si aucun document n'est trouvé et afficher un message
+                            if (tableBody.innerHTML.trim() === '') {
+                                tableBody.innerHTML =
+                                    '<tr><td colspan="6" class="text-center">Aucun document trouvé.</td></tr>';
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error(xhr.responseText);
+                        }
+                    });
+                }
+
+                searchInput.addEventListener("input", fetchDocuments);
+                typeSelect.addEventListener("change", fetchDocuments);
+                sortSelect.addEventListener("change", fetchDocuments);
+            });
+        </script>
+
     </body>
 
     </html>

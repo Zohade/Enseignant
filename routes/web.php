@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/document/download/{id}', [DocumentController::class, 'download'])->name('document.download');
     Route::post('/document/paiement', [DocumentController::class, 'afterPaiement'])->name('document.afterPaiement');
     Route::get('/document/download/{doc}', [DocumentController::class, 'downloadFile'])->name('document.downloadFile');
+    Route::get('/document/search', [DocumentController::class, 'search'])->name('document.search');
     //Publication
     Route::resource('publication', PublicationController::class);
     //Post

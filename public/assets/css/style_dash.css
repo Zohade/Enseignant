@@ -65,7 +65,7 @@ a {
 
 .sidebar-profile-info ul li span {
     float: right;
-    color: #045be6;
+    color: teal;
 }
 .sidebar-profile-link {
     display: flex;
@@ -119,7 +119,7 @@ a {
     margin-right: -25px;
 }
 .discover-more-link a {
-    color: #045be6;
+    color: teal;
     display: inline-block;
     margin: 10px 0;
 }
@@ -271,7 +271,7 @@ a {
     margin-right: 5px;
 }
 .create-post-links li:last-child {
-    background: #045be6;
+    background: teal;
     color: #fff;
     border-top: 0;
     border-right: 0;

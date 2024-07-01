@@ -84,7 +84,7 @@
                                 style="border: none;background:none"> Formation à venir</button></li>
                     @endif
                     <li><button type="submit" name="PostSoumission"
-                            style="background:#045be6;border:none;color:#fff">Poster</button></li>
+                            style="background:teal;border:none;color:#fff">Poster</button></li>
                     </form>
 
                 </div>
