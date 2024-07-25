@@ -30,7 +30,7 @@ class AcceuilControlleur extends Controller
         return view('afterAuth.index', compact('fils','formationsAvenir'));
     }
 
-    private function getTimeElapsed($createdAt)
+ private function getTimeElapsed($createdAt)
         {
             $created = Carbon::parse($createdAt, new DateTimeZone("Africa/Porto-Novo"));
             $now = Carbon::now(new DateTimeZone("Africa/Porto-Novo"));
@@ -53,5 +53,8 @@ class AcceuilControlleur extends Controller
                 return $created->format('Y-m-d H:i:s');
             }
         }
+
+
+
 
 }

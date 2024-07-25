@@ -16,7 +16,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 card-margin">
-                    <div class="card search-form">
+                    <div class="card search-form" style="width: 100%">
                         <div class="card-body p-0">
                             <form id="search-form" method="GET" action="{{ route('document.search') }}">
                                 <div class="row">
@@ -49,7 +49,6 @@
                                     </div>
                                 </div>
                             </form>
-
                         </div>
                     </div>
                 </div>
