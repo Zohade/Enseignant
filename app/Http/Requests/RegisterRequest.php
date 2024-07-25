@@ -22,9 +22,9 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nom"=>"required|string",
-            "prenom"=>"required|string",
-            "mail"=>"required|email|unique:users,email",
+            "nom"=>"alpha|required",
+            "prenom"=>"required|alpha",
+            "mail"=>"required|email|unique:users,email|regex:/^[a-z][a-z0-9._%+-]*@[a-z0-9.-]+\.[a-z]{2,}$/",
             "phone_number"=>"required|regex:/^[4569][0-9]{7}$/|unique:users,phone_number",
             "password"=>"required|confirmed|min:8",
             "departement"=>"required|exists:departements,id",
@@ -39,6 +39,7 @@ class RegisterRequest extends FormRequest
             "prenom.required"=> "Entrez votre prénom",
             "mail.required"=>"Entrez votre adresse mail",
             "mail.email"=> "Votre mail n'est pas valide",
+            "mail.regex"=>"Votre mail n'est pas valide",
             "mail.unique"=> "Il y a déjà un compte avec cette adresse mail",
             "phone_number.required"=> "Entrez votre numéro de téléphone",
             "phone_number.unique"=> "Il y a déjà un compte avec ce numéro de téléphone",

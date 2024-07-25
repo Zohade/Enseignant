@@ -9,17 +9,10 @@ use App\Models\Post;
 use App\Models\Publication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Services\ClamAVScanner;
 use Illuminate\Routing\Route;
 
 class PublicationController extends Controller
 {
-    protected $clamAVScanner;
-
-    public function __construct(ClamAVScanner $clamAVScanner)
-    {
-        $this->clamAVScanner = $clamAVScanner;
-    }
     /**
      * Display a listing of the resource.
      */
@@ -70,11 +63,6 @@ class PublicationController extends Controller
 
             $file = $request->document;
             $filePath = $file->getPathName();
-            $scanResult = $this->clamAVScanner->scanFile($filePath);
-            if ($scanResult !== true) {
-                return response()->json(['error' => 'File is infected: ' . $scanResult], 400);
-            }
-
             if($file->getSize()<=52428800){
                 $lastPubId = Document::orderBy('id', 'desc')->first();
                 if ($lastPubId == null) {

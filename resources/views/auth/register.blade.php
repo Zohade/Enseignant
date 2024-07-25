@@ -7,6 +7,7 @@
     <title>Formulaire d'inscription</title>
     <link rel="stylesheet" href="{{ asset('assets/css/register.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/alert.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/images/logo.png') }}">
 </head>
 
 <body>

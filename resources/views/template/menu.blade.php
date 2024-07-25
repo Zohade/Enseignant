@@ -1,7 +1,8 @@
 <link rel="stylesheet" href="{{ asset('assets/css/menu.css') }}">
 <nav class="navbar">
     <div class="navbar-left">
-        <a href="index.html" class="logo"><img src="{{ asset('assets/images/logo.png') }}" alt="logo"></a>
+        <a href="index.html" class="logo"><img src="{{ asset('assets/images/logo.png') }}" alt="logo"
+                style="width: 50px"></a>
         <div class="search-box">
             <img src="{{ asset('assets/images/search.png') }}">
             <input type="text" placeholder="Rechercher">
@@ -18,7 +19,7 @@
                     <span>Documents</span></a></li>
             <li><a href="#" class="{{ request()->routeIs('messages') ? 'active-link' : '' }}">
                     <img src="{{ asset('assets/images/message.png') }}" alt="message">
-                    <span>Messages</span></a></li>
+                    <span>Collaboration</span></a></li>
             <li><a href="#" class="{{ request()->routeIs('notifications') ? 'active-link' : '' }}">
                     <img src="{{ asset('assets/images/notification.png') }}" alt="notification">
                     <span>Notifications</span></a></li>

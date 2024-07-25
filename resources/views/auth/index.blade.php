@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/form.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/alert.css') }}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/images/logo.png') }}">
     <title>Connexion</title>
 </head>
 
