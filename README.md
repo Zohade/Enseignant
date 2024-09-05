@@ -65,4 +65,3 @@ Les contributions sont les bienvenues. Si vous souhaitez contribuer, veuillez su
 
 ---
 
-Cela donne une présentation claire du projet et des étapes d'installation pour les autres développeurs.
